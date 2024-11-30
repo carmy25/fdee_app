@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/themes/app_colors.dart';
@@ -38,30 +37,19 @@ class AppBottomBar extends StatelessWidget {
         onTap: onTap,
         items: const [
           BottomNavigationBarItem(
-            label: 'Home',
+            label: 'Головна',
             icon: Icon(Icons.home_outlined),
             activeIcon: BottomBarIndicator(icon: Icon(Icons.home)),
           ),
           BottomNavigationBarItem(
-            label: 'Favorite',
-            icon: Icon(Icons.favorite_border),
-            activeIcon: BottomBarIndicator(icon: Icon(Icons.favorite)),
-          ),
-          BottomNavigationBarItem(
-            label: 'Cart',
+            label: 'Замовлення',
             icon: Icon(Icons.shopping_cart_outlined),
             activeIcon: BottomBarIndicator(icon: Icon(Icons.shopping_cart)),
           ),
           BottomNavigationBarItem(
-            label: 'Search',
-            icon: Icon(CupertinoIcons.search),
-            activeIcon: BottomBarIndicator(icon: Icon(CupertinoIcons.search)),
-          ),
-          BottomNavigationBarItem(
-            label: 'Profile',
-            icon: Icon(CupertinoIcons.profile_circled),
-            activeIcon:
-                BottomBarIndicator(icon: Icon(CupertinoIcons.profile_circled)),
+            label: 'Всі чеки',
+            icon: Icon(Icons.receipt_long_outlined),
+            activeIcon: BottomBarIndicator(icon: Icon(Icons.receipt_long)),
           ),
         ],
       ),

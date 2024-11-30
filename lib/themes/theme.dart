@@ -25,12 +25,12 @@ class AppTheme {
       ),
       textTheme: Theme.of(context).textTheme.merge(
             GoogleFonts.interTextTheme().copyWith(
-              headline4: GoogleFonts.inter(
-                fontSize: 30.sp,
-                fontWeight: FontWeight.w700,
-                color: primaryTextColor,
-              ),
-            ),
+                headlineSmall: GoogleFonts.inter(
+                  fontSize: 30.sp,
+                  fontWeight: FontWeight.w700,
+                  color: primaryTextColor,
+                ),
+                labelLarge: const TextStyle(fontWeight: FontWeight.bold)),
           ),
     );
   }

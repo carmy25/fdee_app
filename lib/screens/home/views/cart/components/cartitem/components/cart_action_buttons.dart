@@ -22,7 +22,7 @@ class CartActionButtons extends StatelessWidget {
           onPressed: onReduce,
           icon: Icon(
             CupertinoIcons.minus_circle_fill,
-            size: 32,
+            size: 30,
             color: Colors.grey.shade600,
           ),
         ),
@@ -31,7 +31,7 @@ class CartActionButtons extends StatelessWidget {
           child: Text(
             '$itemCount',
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 19,
             ),
           ),
         ),
@@ -39,7 +39,7 @@ class CartActionButtons extends StatelessWidget {
           onPressed: onAdd,
           icon: Icon(
             Icons.add_circle_rounded,
-            size: 32,
+            size: 30,
             color: pinkColor,
           ),
         ),

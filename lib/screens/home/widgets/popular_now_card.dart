@@ -28,12 +28,12 @@ class PopularNowCard extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: 155,
-          height: 230,
+          width: 150,
+          height: 180,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(15),
             boxShadow: [lightBoxShadow],
           ),
           // padding: EdgeInsets.zero,
@@ -48,14 +48,14 @@ class PopularNowCard extends StatelessWidget {
                     image: AssetImage(image),
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: 145,
+                    height: 100,
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 14,
+                  horizontal: 1,
+                  vertical: 1,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

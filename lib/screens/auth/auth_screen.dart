@@ -135,7 +135,7 @@ class _AuthTabs extends StatelessWidget {
             children: [
               Text(
                 text,
-                style: Theme.of(context).textTheme.headline4!.copyWith(
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 22,
                       color: active ? primaryTextColor : greyColor,

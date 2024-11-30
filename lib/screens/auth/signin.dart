@@ -42,7 +42,7 @@ class _SignInState extends State<SignIn> {
                   child: Checkbox(
                     splashRadius: 3,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    fillColor: MaterialStatePropertyAll(primaryColor),
+                    fillColor: WidgetStatePropertyAll(primaryColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),

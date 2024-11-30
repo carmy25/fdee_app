@@ -26,10 +26,13 @@ class BuildPriceAndCartActions extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const SizedBox(
+                  width: 10,
+                ),
                 Text(
-                  '\$${price.round()}',
+                  '₴${price.round()}',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 23,
                     color: pinkColor,
                   ),
                 ),

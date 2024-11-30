@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fudiee/screens/home/views/home/components/bottom_app_bar.dart';
 import 'package:fudiee/screens/home/views/cart/cart_view.dart';
 import 'package:fudiee/screens/home/views/home/home_view.dart';
+import 'package:fudiee/screens/home/views/receipts/receipts_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,22 +34,19 @@ class _HomeScreenState extends State<HomeScreen> {
         currentBottomIndex: currentBottomIndex,
         onTap: (value) => switchPage(value),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
           if (currentBottomIndex > 0) {
             switchPage(0);
-            return false;
           }
-          return true;
         },
         child: BuildPages(
           currentPage: currentBottomIndex,
           pages: const [
             HomeView(),
-            SizedBox(child: Center(child: CircularProgressIndicator())),
             CartView(),
-            SizedBox(child: Center(child: CircularProgressIndicator())),
-            SizedBox(child: Center(child: CircularProgressIndicator())),
+            ReceiptsView(),
           ],
           onPageChanged: (value) =>
               setState(() => currentBottomIndex = value.round()),

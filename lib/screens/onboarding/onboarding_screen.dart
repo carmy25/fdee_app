@@ -196,7 +196,7 @@ class OnboardingTitle extends StatelessWidget {
           width: 200,
           child: Text(
             title,
-            style: Theme.of(context).textTheme.headline4,
+            style: Theme.of(context).textTheme.headlineMedium,
             maxLines: 2,
           ),
         ),
