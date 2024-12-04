@@ -26,11 +26,11 @@ class _SignInState extends State<SignIn> {
           children: [
             const SizedBox(height: 30),
             const AppTextFormField(
-              hint: 'Email Address',
+              hint: "Ім'я",
             ),
             const SizedBox(height: 16),
             const AppTextFormField(
-              hint: 'Password',
+              hint: 'Пароль',
               obscurable: true,
             ),
             const SizedBox(height: 8),
@@ -55,7 +55,7 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
                 Text(
-                  'Remember me',
+                  'Запамятати',
                   style: TextStyle(
                     fontSize: 12,
                     color: rememberMe
@@ -63,50 +63,15 @@ class _SignInState extends State<SignIn> {
                         : primaryTextColor.withOpacity(0.7),
                   ),
                 ),
-                const Spacer(),
-                SizedBox(
-                  height: 35,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Forgot password',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                        color: primaryColor,
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 8),
             AppButton(
-              text: 'Sign in',
+              text: 'Ввійти',
               onPressed: () {
                 Get.toNamed(HomeScreen.routeName);
               },
             ),
-            const SizedBox(height: 2),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Dont have an account?'),
-                TextButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
-              ],
-            )
           ],
         ),
       ),

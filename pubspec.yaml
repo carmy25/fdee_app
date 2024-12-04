@@ -48,6 +48,7 @@ dependencies:
   toggle_switch: ^2.3.0
   font_awesome_flutter: ^10.8.0
   drf_client: ^0.0.6
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:

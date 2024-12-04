@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/screens/auth/signin.dart';
-import 'package:fudiee/screens/auth/signup.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +22,7 @@ class _AuthScreenState extends State<AuthScreen>
   @override
   void initState() {
     _tabController = TabController(
-      length: 2,
+      length: 1,
       vsync: this,
     );
 
@@ -71,17 +70,10 @@ class _AuthScreenState extends State<AuthScreen>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _AuthTabs(
-                              text: 'Sign in',
+                              text: 'Вхід',
                               active: currentTab == 0,
                               onTap: () {
                                 _tabController.animateTo(0);
-                              },
-                            ),
-                            _AuthTabs(
-                              text: 'Sign up',
-                              active: currentTab == 1,
-                              onTap: () {
-                                _tabController.animateTo(1);
                               },
                             ),
                           ],
@@ -93,7 +85,6 @@ class _AuthScreenState extends State<AuthScreen>
                           physics: const BouncingScrollPhysics(),
                           children: const [
                             SignIn(),
-                            Signup(),
                           ],
                         ),
                       ),

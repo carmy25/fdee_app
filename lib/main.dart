@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/bindings/bindings.dart';
 import 'package:fudiee/routes/router.dart';
@@ -11,7 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    OrientationBuilder(
+    ProviderScope(child: OrientationBuilder(
       builder: (context, orientation) {
         SystemChrome.setPreferredOrientations([
           DeviceOrientation.portraitUp,
@@ -19,7 +20,7 @@ void main() async {
         ]);
         return const MyApp();
       },
-    ),
+    )),
   );
 }
 
