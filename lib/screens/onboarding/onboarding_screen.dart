@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/constants/data.dart';
-import 'package:fudiee/screens/auth/auth_screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
-import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -45,7 +44,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: Column(
         children: [
           SizedBox(
-            height: Get.height * 0.84,
             child: PageView.builder(
               controller: pageController,
               physics: const BouncingScrollPhysics(),
@@ -88,9 +86,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 SizedBox(height: 25.h),
                 AppButton(
                   text: 'Get Started',
-                  onPressed: () {
-                    Get.toNamed(AuthScreen.routeName);
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -109,25 +105,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-class OnboardingInfo extends StatelessWidget {
+class OnboardingInfo extends ConsumerWidget {
   const OnboardingInfo({
-    Key? key,
+    super.key,
     required this.image,
     required this.title,
     required this.subtitle,
-  }) : super(key: key);
+  });
 
   final String image;
   final String title;
   final String subtitle;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
-          height: Get.height * 0.57,
           child: FadeInImage(
             image: AssetImage(image),
             placeholder: AssetImage(image),
@@ -147,18 +142,18 @@ class OnboardingInfo extends StatelessWidget {
   }
 }
 
-class AppButton extends StatelessWidget {
+class AppButton extends ConsumerWidget {
   const AppButton({
-    Key? key,
+    super.key,
     this.onPressed,
     required this.text,
-  }) : super(key: key);
+  });
 
   final VoidCallback? onPressed;
   final String text;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -176,18 +171,18 @@ class AppButton extends StatelessWidget {
   }
 }
 
-class OnboardingTitle extends StatelessWidget {
+class OnboardingTitle extends ConsumerWidget {
   const OnboardingTitle({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
-  }) : super(key: key);
+  });
 
   final String title;
   final String subtitle;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,

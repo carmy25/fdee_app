@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:fudiee/screens/home/widgets/fadein_image.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MealSuggestionWidget extends StatelessWidget {
+class MealSuggestionWidget extends ConsumerWidget {
   const MealSuggestionWidget({
-    Key? key,
+    super.key,
     required this.image,
     required this.onAdd,
     this.isAdded = false,
-  }) : super(key: key);
+  });
 
   final String image;
   final VoidCallback onAdd;
   final bool isAdded;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       height: 81,
       child: Stack(

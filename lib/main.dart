@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fudiee/bindings/bindings.dart';
 import 'package:fudiee/routes/router.dart';
-import 'package:fudiee/screens/splash/splash_screen.dart';
 import 'package:fudiee/themes/theme.dart';
-import 'package:get/get.dart';
 
 import 'package:flutter_data/flutter_data.dart';
 
@@ -42,13 +39,20 @@ class MyApp extends HookConsumerWidget {
         ),
       ),
     ); */
+    final routerConfig = ref.watch(appRouterProvider);
 
     return ScreenUtilInit(
       designSize: const Size(428, 926),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, _) {
-        return GetMaterialApp(
+        return MaterialApp.router(
+          title: 'FDee',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.buildTheme(context),
+          routerConfig: routerConfig,
+        );
+        /* return MaterialApp(
           initialBinding: InitialBindings(),
           title: 'Fudiee',
           debugShowCheckedModeBanner: false,
@@ -56,6 +60,7 @@ class MyApp extends HookConsumerWidget {
           initialRoute: SplashScreen.routeName,
           getPages: AppRouter.routes,
         );
+      }, */
       },
     );
   }

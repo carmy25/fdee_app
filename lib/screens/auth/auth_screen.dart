@@ -102,20 +102,19 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   }
 }
 
-class _AuthTabs extends StatelessWidget {
+class _AuthTabs extends ConsumerWidget {
   const _AuthTabs({
-    Key? key,
     required this.text,
     required this.active,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   final String text;
   final bool active;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),

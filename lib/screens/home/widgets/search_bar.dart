@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SearchBar extends StatelessWidget {
+class SearchBar extends ConsumerWidget {
   const SearchBar({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return TextFormField(
       decoration: InputDecoration(
         enabledBorder: _inputBorder,

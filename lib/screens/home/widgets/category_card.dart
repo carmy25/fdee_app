@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fudiee/screens/home/widgets/app_circle_image.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CategoryCard extends StatelessWidget {
+class CategoryCard extends ConsumerWidget {
   const CategoryCard({
-    Key? key,
+    super.key,
     required this.category,
     required this.image,
     required this.selected,
     required this.onSelected,
-  }) : super(key: key);
+  });
 
   final String category;
   final String image;
@@ -17,7 +18,7 @@ class CategoryCard extends StatelessWidget {
   final ValueChanged onSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(

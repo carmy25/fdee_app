@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/user/user.model.dart';
+import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/home/home_screen.dart';
 import 'package:fudiee/screens/onboarding/onboarding_screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:fudiee/widgets/textfield/app_textfield.dart';
-import 'package:get/get.dart';
 
 class SignIn extends ConsumerStatefulWidget {
   const SignIn({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SignInState();
@@ -33,6 +33,7 @@ class _SignInState extends ConsumerState<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final router = ref.watch(appRouterProvider);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(29, 0, 29, 0),
@@ -89,8 +90,9 @@ class _SignInState extends ConsumerState<SignIn> {
                   username: _usernameController.text,
                   password: _passwdController.text,
                 );
-                if (user?.token != null) {
-                  Get.toNamed(HomeScreen.routeName);
+                if (user?.token == null) {
+                  print('ddd');
+                  router.goNamed(HomeScreen.routeName);
                 }
               },
             ),

@@ -4,8 +4,8 @@ import 'package:fudiee/themes/app_colors.dart';
 
 class ReceiptsView extends StatefulWidget {
   const ReceiptsView({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ReceiptsView> createState() => _ReceiptsViewState();

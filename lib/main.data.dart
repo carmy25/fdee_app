@@ -5,7 +5,7 @@
 
 import 'package:flutter_data/flutter_data.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fudiee/models/user/user.model.dart';
@@ -13,7 +13,7 @@ import 'package:fudiee/models/user/user.model.dart';
 // ignore: prefer_function_declarations_over_variables
 ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({FutureFn<String>? baseDirFn, List<int>? encryptionKey, LocalStorageClearStrategy? clear}) {
   if (!kIsWeb) {
-    
+    baseDirFn ??= () => getApplicationDocumentsDirectory().then((dir) => dir.path);
   } else {
     baseDirFn ??= () => '';
   }
@@ -59,5 +59,5 @@ extension RepositoryWidgetRefX on WidgetRef {
 
 extension RepositoryRefX on Ref {
 
-  Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
 }

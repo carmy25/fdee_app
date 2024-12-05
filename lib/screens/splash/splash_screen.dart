@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/main.data.dart';
+import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/auth/auth_screen.dart';
 import 'package:fudiee/screens/home/home_screen.dart';
-import 'package:get/get.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -19,11 +19,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     Future.delayed(
       const Duration(
         seconds: 2,
       ),
       () {
+        final router = ref.read(appRouterProvider);
         final userState = ref.users.watchOne(1, remote: false);
         if (userState.isLoading) {
           return null;
@@ -31,12 +33,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         if (userState.hasException) {
           return null;
         }
-
         if (userState.hasModel) {
-          Get.offAllNamed(HomeScreen.routeName);
+          router.go(HomeScreen.routeName);
+
           return null;
         }
-        Get.offAllNamed(AuthScreen.routeName);
+        router.go(AuthScreen.routeName);
         // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       },
     );

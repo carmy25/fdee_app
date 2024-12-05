@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fudiee/screens/home/views/cart/components/cartitem/components/price_and_cart_actions.dart';
 import './components/build_image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CartItem extends StatelessWidget {
+class CartItem extends ConsumerWidget {
   const CartItem(
-      {Key? key,
+      {super.key,
       required this.index,
       required this.image,
       required this.title,
       required this.desc,
       required this.price,
       required this.rating,
-      this.canDelete = true})
-      : super(key: key);
+      this.canDelete = true});
 
   final int index;
   final String image;
@@ -23,7 +23,7 @@ class CartItem extends StatelessWidget {
   final bool canDelete;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Row(

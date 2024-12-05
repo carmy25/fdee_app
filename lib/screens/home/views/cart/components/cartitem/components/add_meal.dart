@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/themes/app_colors.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'meal_suggestion_widget.dart';
 
-class AddYourMeal extends StatelessWidget {
+class AddYourMeal extends ConsumerWidget {
   const AddYourMeal({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // probably add some more metadata
     final List suggestedMeals = [
       Assets.cake2,

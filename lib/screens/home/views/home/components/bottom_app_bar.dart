@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AppBottomBar extends StatelessWidget {
+class AppBottomBar extends ConsumerWidget {
   const AppBottomBar({
-    Key? key,
+    super.key,
     required this.currentBottomIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   final int currentBottomIndex;
   final ValueChanged onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       alignment: Alignment.topCenter,
       height: 80.h,
@@ -57,15 +58,15 @@ class AppBottomBar extends StatelessWidget {
   }
 }
 
-class BottomBarIndicator extends StatelessWidget {
+class BottomBarIndicator extends ConsumerWidget {
   const BottomBarIndicator({
-    Key? key,
+    super.key,
     required this.icon,
-  }) : super(key: key);
+  });
   final Widget icon;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         icon,

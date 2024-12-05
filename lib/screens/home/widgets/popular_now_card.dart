@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fudiee/screens/home/widgets/category_card.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:fudiee/widgets/buttons/app_icon_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PopularNowCard extends StatelessWidget {
+class PopularNowCard extends ConsumerWidget {
   const PopularNowCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.deliveryTime,
     required this.price,
@@ -13,7 +14,7 @@ class PopularNowCard extends StatelessWidget {
     required this.onLike,
     required this.image,
     this.favorite = false,
-  }) : super(key: key);
+  });
 
   final String title;
   final double deliveryTime;
@@ -24,7 +25,7 @@ class PopularNowCard extends StatelessWidget {
   final bool favorite;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Stack(
       children: [
         Container(

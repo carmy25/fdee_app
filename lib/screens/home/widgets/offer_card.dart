@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class OfferCard extends StatelessWidget {
+class OfferCard extends ConsumerWidget {
   const OfferCard({
-    Key? key,
+    super.key,
     required this.percentOff,
     required this.offer,
     required this.onPressed,
     required this.image,
-  }) : super(key: key);
+  });
 
   final double percentOff;
   final String offer;
@@ -17,7 +18,7 @@ class OfferCard extends StatelessWidget {
   final String image;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: 260.w,
       // width: 400,

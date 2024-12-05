@@ -3,6 +3,7 @@ import 'package:fudiee/screens/home/views/home/components/bottom_app_bar.dart';
 import 'package:fudiee/screens/home/views/cart/cart_view.dart';
 import 'package:fudiee/screens/home/views/home/home_view.dart';
 import 'package:fudiee/screens/home/views/receipts/receipts_view.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class BuildPages extends StatelessWidget {
+class BuildPages extends ConsumerWidget {
   const BuildPages({
     super.key,
     required this.currentPage,
@@ -72,7 +73,7 @@ class BuildPages extends StatelessWidget {
   final PageController pageController;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return PageView(
       clipBehavior: Clip.antiAlias,
       controller: pageController,

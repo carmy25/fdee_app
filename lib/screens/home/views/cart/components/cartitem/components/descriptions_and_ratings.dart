@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:fudiee/controllers/cart/cart_controller.dart';
-import 'package:get/get.dart';
 
-class BuildDescriptionsAndRatings extends GetView<CartController> {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class BuildDescriptionsAndRatings extends ConsumerWidget {
   const BuildDescriptionsAndRatings({
-    Key? key,
+    super.key,
     required this.title,
     required this.desc,
     required this.rating,
     required this.index,
-  }) : super(key: key);
+  });
 
   final String title;
   final String desc;
@@ -18,7 +18,7 @@ class BuildDescriptionsAndRatings extends GetView<CartController> {
   final int index;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Stack(
       children: [
         Container(
@@ -61,9 +61,7 @@ class BuildDescriptionsAndRatings extends GetView<CartController> {
               color: Colors.amber,
             ),
             itemSize: 20,
-            onRatingUpdate: (rating) {
-              controller.rate(index, rating);
-            },
+            onRatingUpdate: (rating) {},
           ),
         )
       ],

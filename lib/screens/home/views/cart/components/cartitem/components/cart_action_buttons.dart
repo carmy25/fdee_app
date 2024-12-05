@@ -1,21 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CartActionButtons extends StatelessWidget {
+class CartActionButtons extends ConsumerWidget {
   const CartActionButtons({
-    Key? key,
+    super.key,
     required this.itemCount,
     required this.onReduce,
     required this.onAdd,
-  }) : super(key: key);
+  });
 
   final num itemCount;
   final VoidCallback onReduce;
   final VoidCallback onAdd;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Row(
       children: [
         IconButton(

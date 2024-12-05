@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-class AppIconButton extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class AppIconButton extends ConsumerWidget {
   const AppIconButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   final Widget icon;
   final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Material(
       type: MaterialType.transparency,
       child: InkWell(

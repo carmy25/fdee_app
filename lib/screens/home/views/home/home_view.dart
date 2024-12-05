@@ -8,8 +8,8 @@ import '../../widgets/popular_now_card.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<HomeView> createState() => _HomeViewState();

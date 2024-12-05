@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
-    Key? key,
+    super.key,
     required this.hint,
     this.controller,
     this.obscurable = false,
-  }) : super(key: key);
+  });
 
   final String hint;
   final bool obscurable;

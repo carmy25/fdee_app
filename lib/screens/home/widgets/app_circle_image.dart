@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
-class AppCircleImage extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class AppCircleImage extends ConsumerWidget {
   const AppCircleImage({
-    Key? key,
+    super.key,
     required this.image,
-  }) : super(key: key);
+  });
 
   final String image;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(30),
       child: SizedBox(
