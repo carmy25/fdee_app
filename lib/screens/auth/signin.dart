@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fudiee/main.data.dart';
+import 'package:fudiee/models/user/user.model.dart';
 import 'package:fudiee/screens/home/home_screen.dart';
 import 'package:fudiee/screens/onboarding/onboarding_screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:fudiee/widgets/textfield/app_textfield.dart';
 import 'package:get/get.dart';
 
-class SignIn extends StatefulWidget {
+class SignIn extends ConsumerStatefulWidget {
   const SignIn({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<SignIn> createState() => _SignInState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SignInState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignInState extends ConsumerState<SignIn> {
   bool rememberMe = false;
+  final _usernameController = TextEditingController();
+  final _passwdController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    _usernameController.dispose();
+    _passwdController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +39,14 @@ class _SignInState extends State<SignIn> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            const AppTextFormField(
+            AppTextFormField(
+              controller: _usernameController,
               hint: "Ім'я",
             ),
             const SizedBox(height: 16),
-            const AppTextFormField(
+            AppTextFormField(
               hint: 'Пароль',
+              controller: _passwdController,
               obscurable: true,
             ),
             const SizedBox(height: 8),
@@ -68,8 +84,14 @@ class _SignInState extends State<SignIn> {
             const SizedBox(height: 8),
             AppButton(
               text: 'Ввійти',
-              onPressed: () {
-                Get.toNamed(HomeScreen.routeName);
+              onPressed: () async {
+                final user = await ref.users.jsonUserAdapter.signIn(
+                  username: _usernameController.text,
+                  password: _passwdController.text,
+                );
+                if (user?.token != null) {
+                  Get.toNamed(HomeScreen.routeName);
+                }
               },
             ),
           ],

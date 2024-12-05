@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/screens/auth/signin.dart';
 import 'package:fudiee/themes/app_colors.dart';
-import 'package:get/get.dart';
 
-class AuthScreen extends StatefulWidget {
+class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
 
   static String routeName = '/auth';
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen>
+class _AuthScreenState extends ConsumerState<AuthScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   var currentTab = 0;
@@ -41,16 +41,18 @@ class _AuthScreenState extends State<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
-          height: Get.height,
+          height: height,
           child: Column(
             children: [
               SizedBox(
                 width: double.infinity,
-                height: Get.height * 0.45,
+                height: height * 0.45,
                 child: Image.asset(
                   Assets.authBg,
                   fit: BoxFit.fitWidth,
