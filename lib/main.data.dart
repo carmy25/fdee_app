@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:fudiee/models/product/product.model.dart';
 import 'package:fudiee/models/user/user.model.dart';
 
 // ignore: prefer_function_declarations_over_variables
@@ -29,14 +30,16 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({FutureFn<Str
 };
 
 final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
-  'users': usersRepositoryProvider
+  'products': productsRepositoryProvider,
+'users': usersRepositoryProvider
 };
 
 final repositoryInitializerProvider =
   FutureProvider<RepositoryInitializer>((ref) async {
+    DataHelpers.setInternalType<Product>('products');
     DataHelpers.setInternalType<User>('users');
-    final adapters = <String, RemoteAdapter>{'users': ref.watch(internalUsersRemoteAdapterProvider)};
-    final remotes = <String, bool>{'users': true};
+    final adapters = <String, RemoteAdapter>{'products': ref.watch(internalProductsRemoteAdapterProvider), 'users': ref.watch(internalUsersRemoteAdapterProvider)};
+    final remotes = <String, bool>{'products': true, 'users': true};
 
     await ref.watch(graphNotifierProvider).initialize();
 
@@ -54,10 +57,12 @@ final repositoryInitializerProvider =
     return RepositoryInitializer();
 });
 extension RepositoryWidgetRefX on WidgetRef {
+  Repository<Product> get products => watch(productsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
 extension RepositoryRefX on Ref {
 
+  Repository<Product> get products => watch(productsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
 }

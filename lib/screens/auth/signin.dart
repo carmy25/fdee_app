@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/user/user.model.dart';
 import 'package:fudiee/routes/router.dart';
-import 'package:fudiee/screens/home/home_screen.dart';
 import 'package:fudiee/screens/onboarding/onboarding_screen.dart';
+import 'package:fudiee/screens/receipts/receipts.screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:fudiee/widgets/textfield/app_textfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends ConsumerStatefulWidget {
   const SignIn({
@@ -90,9 +91,11 @@ class _SignInState extends ConsumerState<SignIn> {
                   username: _usernameController.text,
                   password: _passwdController.text,
                 );
-                if (user?.token == null) {
-                  print('ddd');
-                  router.goNamed(HomeScreen.routeName);
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                if (user?.token != null) {
+                  await prefs.setString('token', user!.token);
+                  router.go(ReceiptsScreen.routePath);
                 }
               },
             ),

@@ -30,7 +30,7 @@ mixin JsonUserAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     return sendRequest(
       baseUrl.asUri,
       method: DataRequestMethod.POST,
-      headers: await defaultHeaders & {'Content-Type': 'application/json'},
+      headers: await defaultHeaders,
       body: json.encode(payload),
     );
   }

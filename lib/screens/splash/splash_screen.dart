@@ -4,7 +4,7 @@ import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/auth/auth_screen.dart';
-import 'package:fudiee/screens/home/home_screen.dart';
+import 'package:fudiee/screens/receipts/receipts.screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -34,7 +34,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           return null;
         }
         if (userState.hasModel) {
-          router.go(HomeScreen.routeName);
+          router.go(ReceiptsScreen.routePath);
 
           return null;
         }
