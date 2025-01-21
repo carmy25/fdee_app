@@ -95,6 +95,7 @@ class _SignInState extends ConsumerState<SignIn> {
                     await SharedPreferences.getInstance();
                 if (user?.token != null) {
                   await prefs.setString('token', user!.token);
+                  await prefs.setBool('remember', rememberMe);
                   router.go(ReceiptsScreen.routePath);
                 }
               },

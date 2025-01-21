@@ -23,7 +23,7 @@ mixin $ReceiptLocalAdapter on LocalAdapter<Receipt> {
 
   @override
   Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
-    final map = _$ReceiptToJson(model);
+    final map = model.toJson();
     return transformSerialize(map, withRelationships: withRelationships);
   }
 }
@@ -57,10 +57,10 @@ extension ReceiptRelationshipGraphNodeX on RelationshipGraphNode<Receipt> {}
 
 Receipt _$ReceiptFromJson(Map<String, dynamic> json) => Receipt(
       id: (json['id'] as num?)?.toInt(),
-      place: json['place'] as String,
-      number: (json['number'] as num).toInt(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      paymentMethod: json['paymentMethod'] as String,
+      place: Receipt._placeFromJson(json['place'] as String?),
+      number: json['number'] as num,
+      createdAt: Receipt._createdAtFromJson(json['created_at'] as String),
+      paymentMethod: json['payment_method'] as String,
       price: (json['price'] as num).toDouble(),
     );
 
@@ -68,7 +68,7 @@ Map<String, dynamic> _$ReceiptToJson(Receipt instance) => <String, dynamic>{
       'id': instance.id,
       'place': instance.place,
       'number': instance.number,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'paymentMethod': instance.paymentMethod,
+      'created_at': Receipt._createdAtToJson(instance.createdAt),
+      'payment_method': instance.paymentMethod,
       'price': instance.price,
     };

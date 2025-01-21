@@ -54,6 +54,7 @@ dependencies:
   go_router: ^14.6.2
   riverpod: ^2.6.1
   shared_preferences: ^2.3.3
+  freezed_annotation: ^2.4.4
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,7 @@ dev_dependencies:
   riverpod_generator: ^2.6.3
   custom_lint: ^0.7.0
   riverpod_lint: ^2.6.3
+  freezed: ^2.5.7
 
 flutter_icons:
   android: "launcher_icon"
