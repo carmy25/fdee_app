@@ -53,6 +53,6 @@ class CategoryCard extends ConsumerWidget {
 var lightBoxShadow = BoxShadow(
   blurRadius: 5,
   spreadRadius: 1,
-  color: greyColor.withOpacity(0.5),
+  color: greyColor.withValues(alpha: .5),
   offset: const Offset(0, 1),
 );

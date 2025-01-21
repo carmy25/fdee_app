@@ -26,8 +26,8 @@ class AppTheme {
       textTheme: Theme.of(context).textTheme.merge(
             GoogleFonts.interTextTheme().copyWith(
                 headlineSmall: GoogleFonts.inter(
-                  fontSize: 30.sp,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 25.sp,
+                  fontWeight: FontWeight.w500,
                   color: primaryTextColor,
                 ),
                 labelLarge: const TextStyle(fontWeight: FontWeight.bold)),
@@ -39,7 +39,7 @@ class AppTheme {
 var defaultInputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(6),
   borderSide: BorderSide(
-    color: primaryColor.withOpacity(0.2),
+    color: primaryColor.withValues(alpha: .2),
     width: 0.8,
   ),
 );

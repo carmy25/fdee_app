@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fudiee/models/product/product.model.dart';
+import 'package:fudiee/models/receipt/receipt.model.dart';
 import 'package:fudiee/models/user/user.model.dart';
 
 // ignore: prefer_function_declarations_over_variables
@@ -31,15 +32,17 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({FutureFn<Str
 
 final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
   'products': productsRepositoryProvider,
+'receipts': receiptsRepositoryProvider,
 'users': usersRepositoryProvider
 };
 
 final repositoryInitializerProvider =
   FutureProvider<RepositoryInitializer>((ref) async {
     DataHelpers.setInternalType<Product>('products');
+    DataHelpers.setInternalType<Receipt>('receipts');
     DataHelpers.setInternalType<User>('users');
-    final adapters = <String, RemoteAdapter>{'products': ref.watch(internalProductsRemoteAdapterProvider), 'users': ref.watch(internalUsersRemoteAdapterProvider)};
-    final remotes = <String, bool>{'products': true, 'users': true};
+    final adapters = <String, RemoteAdapter>{'products': ref.watch(internalProductsRemoteAdapterProvider), 'receipts': ref.watch(internalReceiptsRemoteAdapterProvider), 'users': ref.watch(internalUsersRemoteAdapterProvider)};
+    final remotes = <String, bool>{'products': true, 'receipts': true, 'users': true};
 
     await ref.watch(graphNotifierProvider).initialize();
 
@@ -58,11 +61,13 @@ final repositoryInitializerProvider =
 });
 extension RepositoryWidgetRefX on WidgetRef {
   Repository<Product> get products => watch(productsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Receipt> get receipts => watch(receiptsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
 extension RepositoryRefX on Ref {
 
   Repository<Product> get products => watch(productsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Receipt> get receipts => watch(receiptsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
 }

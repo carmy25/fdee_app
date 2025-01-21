@@ -28,17 +28,6 @@ class MyApp extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    /* return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: ref.watch(repositoryInitializerProvider).when(
-                error: (error, _) => Text(error.toString()),
-                loading: () => const CircularProgressIndicator(),
-                data: (_) => Text('Flutter Data is ready: ${ref.users}'),
-              ),
-        ),
-      ),
-    ); */
     final routerConfig = ref.watch(appRouterProvider);
 
     return ScreenUtilInit(
@@ -52,15 +41,6 @@ class MyApp extends HookConsumerWidget {
           theme: AppTheme.buildTheme(context),
           routerConfig: routerConfig,
         );
-        /* return MaterialApp(
-          initialBinding: InitialBindings(),
-          title: 'Fudiee',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.buildTheme(context),
-          initialRoute: SplashScreen.routeName,
-          getPages: AppRouter.routes,
-        );
-      }, */
       },
     );
   }

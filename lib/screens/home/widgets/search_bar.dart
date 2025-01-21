@@ -15,7 +15,7 @@ class SearchBar extends ConsumerWidget {
         enabledBorder: _inputBorder,
         focusedBorder: _inputBorder.copyWith(
           borderSide: BorderSide(
-            color: primaryColor.withOpacity(0.4),
+            color: primaryColor.withValues(alpha: .4),
           ),
         ),
         contentPadding: const EdgeInsets.symmetric(
@@ -31,7 +31,7 @@ class SearchBar extends ConsumerWidget {
 var _inputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(30),
   borderSide: BorderSide(
-    color: primaryColor.withOpacity(0.3),
+    color: primaryColor.withValues(alpha: .3),
     width: 0.8,
   ),
 );

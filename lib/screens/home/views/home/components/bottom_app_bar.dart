@@ -20,7 +20,8 @@ class AppBottomBar extends ConsumerWidget {
       height: 80.h,
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: primaryColor.withOpacity(0.4), width: 0.6),
+          top:
+              BorderSide(color: primaryColor.withValues(alpha: .4), width: 0.6),
         ),
       ),
       child: BottomNavigationBar(
@@ -32,7 +33,7 @@ class AppBottomBar extends ConsumerWidget {
         unselectedIconTheme: const IconThemeData(size: 22),
         selectedIconTheme: IconThemeData(color: primaryColor, size: 24),
         selectedLabelStyle: TextStyle(color: primaryColor),
-        unselectedItemColor: const Color(0xFF303030).withOpacity(0.7),
+        unselectedItemColor: const Color(0xFF303030).withValues(alpha: .7),
         selectedFontSize: 12.sp,
         unselectedFontSize: 11.sp,
         onTap: onTap,

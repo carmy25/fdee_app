@@ -3,7 +3,6 @@ import 'package:fudiee/models/cart_model.dart';
 import 'package:fudiee/models/category_model.dart';
 import 'package:fudiee/models/offer_model.dart';
 import 'package:fudiee/models/onboarding_model.dart';
-import 'package:fudiee/models/popular_model.dart';
 
 List<OnboardingInfoData> onboardingData = [
   OnboardingInfoData(
@@ -58,26 +57,6 @@ List<CategoryModel> categoryData = [
   ),
 ];
 
-List<PopularModel> popularData = [
-  PopularModel(
-    title: 'African Salad',
-    deliveryTime: 10,
-    price: 20,
-    image: Assets.salad,
-  ),
-  PopularModel(
-    title: 'Jellof Rice',
-    deliveryTime: 15,
-    price: 35,
-    image: Assets.jollofRice,
-  ),
-  PopularModel(
-    title: 'Pizza',
-    deliveryTime: 5,
-    price: 12,
-    image: Assets.pizza2,
-  ),
-];
 
 List<Cart> cartData = [
   Cart(

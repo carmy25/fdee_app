@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/routes/router.dart';
-import 'package:fudiee/screens/auth/auth_screen.dart';
+import 'package:fudiee/screens/auth/auth.screen.dart';
 import 'package:fudiee/screens/receipts/receipts.screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {

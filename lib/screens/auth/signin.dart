@@ -78,7 +78,7 @@ class _SignInState extends ConsumerState<SignIn> {
                     fontSize: 12,
                     color: rememberMe
                         ? primaryColor
-                        : primaryTextColor.withOpacity(0.7),
+                        : primaryTextColor.withValues(alpha: .7),
                   ),
                 ),
               ],

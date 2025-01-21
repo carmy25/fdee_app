@@ -52,7 +52,7 @@ class OfferCard extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w300,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: .9),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
