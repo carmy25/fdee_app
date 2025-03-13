@@ -1,3 +1,8 @@
+import 'package:fudiee/models/receipt/active_receipt.model.dart';
+import 'package:fudiee/models/receipt/receipt.model.dart';
+import 'package:fudiee/widgets/progress_indicator.widget.dart';
+import 'package:intl/intl.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/main.data.dart';
@@ -8,6 +13,7 @@ import 'package:fudiee/themes/app_colors.dart';
 class ReceiptsScreen extends ConsumerStatefulWidget {
   const ReceiptsScreen({super.key});
   static String routePath = '/receipts';
+  static String name = 'ReceiptsScreen';
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ReceiptsScreenState();
@@ -16,10 +22,9 @@ class ReceiptsScreen extends ConsumerStatefulWidget {
 class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
   @override
   Widget build(BuildContext context) {
-    final state = ref.receipts.watchAll();
-
+    final state = ref.receipts.watchAll(syncLocal: true);
     final receiptsBody = state.isLoading
-        ? const Center(child: CircularProgressIndicator())
+        ? ProgressIndicatorWidget()
         : ListView.separated(
             itemCount: state.model.length,
             separatorBuilder: (context, index) => const Divider(height: 0),
@@ -28,9 +33,10 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
               final paymentMethod = 'Готівка';
               return ListTile(
                 leading: CircleAvatar(child: Text(receipt.id.toString())),
-                title:
-                    Text('${receipt.place}. $paymentMethod: ${receipt.price}'),
-                subtitle: Text(receipt.createdAt.toString()),
+                title: Text(
+                    '${receipt.placeName!.isEmpty ? 'З собою' : receipt.placeName}. $paymentMethod: ${receipt.price}'),
+                subtitle: Text(
+                    DateFormat('dd-MM-yy – kk:mm').format(receipt.createdAt!)),
                 trailing: const Icon(Icons.close_rounded),
                 onTap: () {},
               );
@@ -53,6 +59,14 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
           child: const Icon(Icons.add),
           onPressed: () {
             final router = ref.read(appRouterProvider);
+            final activeReceipt = ref.read(activeReceiptProvider.notifier);
+            debugPrint('add receipt');
+            final receipt = Receipt(
+              paymentMethod: 'CARD',
+              price: 0,
+              productItems: [],
+            );
+            activeReceipt.setActive(receipt);
             router.push(CartScreen.routePath);
           }),
       body: receiptsBody,

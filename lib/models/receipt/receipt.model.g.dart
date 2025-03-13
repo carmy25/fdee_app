@@ -35,7 +35,7 @@ class $ReceiptHiveLocalAdapter = HiveLocalAdapter<Receipt>
     with $ReceiptLocalAdapter;
 
 class $ReceiptRemoteAdapter = RemoteAdapter<Receipt>
-    with JsonReceiptAdapter<Receipt>;
+    with JsonBaseAdapter<Receipt>, ReceiptAdapter<Receipt>;
 
 final internalReceiptsRemoteAdapterProvider = Provider<RemoteAdapter<Receipt>>(
     (ref) => $ReceiptRemoteAdapter(
@@ -45,8 +45,10 @@ final receiptsRepositoryProvider =
     Provider<Repository<Receipt>>((ref) => Repository<Receipt>(ref));
 
 extension ReceiptDataRepositoryX on Repository<Receipt> {
-  JsonReceiptAdapter<Receipt> get jsonReceiptAdapter =>
-      remoteAdapter as JsonReceiptAdapter<Receipt>;
+  JsonBaseAdapter<Receipt> get jsonBaseAdapter =>
+      remoteAdapter as JsonBaseAdapter<Receipt>;
+  ReceiptAdapter<Receipt> get receiptAdapter =>
+      remoteAdapter as ReceiptAdapter<Receipt>;
 }
 
 extension ReceiptRelationshipGraphNodeX on RelationshipGraphNode<Receipt> {}
@@ -57,11 +59,15 @@ extension ReceiptRelationshipGraphNodeX on RelationshipGraphNode<Receipt> {}
 
 Receipt _$ReceiptFromJson(Map<String, dynamic> json) => Receipt(
       id: (json['id'] as num?)?.toInt(),
-      place: Receipt._placeFromJson(json['place'] as String?),
-      number: json['number'] as num,
+      place: (json['place'] as num?)?.toInt(),
+      number: json['number'] as num?,
       createdAt: Receipt._createdAtFromJson(json['created_at'] as String),
+      price: (json['price'] as num?)?.toDouble() ?? 0,
+      productItems: (json['product_items'] as List<dynamic>)
+          .map((e) => ProductItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
       paymentMethod: json['payment_method'] as String,
-      price: (json['price'] as num).toDouble(),
+      placeName: Receipt._placeNameFromJson(json['place_name'] as String?),
     );
 
 Map<String, dynamic> _$ReceiptToJson(Receipt instance) => <String, dynamic>{
@@ -71,4 +77,6 @@ Map<String, dynamic> _$ReceiptToJson(Receipt instance) => <String, dynamic>{
       'created_at': Receipt._createdAtToJson(instance.createdAt),
       'payment_method': instance.paymentMethod,
       'price': instance.price,
+      'place_name': instance.placeName,
+      'product_items': instance.productItems,
     };

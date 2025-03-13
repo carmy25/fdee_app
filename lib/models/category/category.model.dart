@@ -1,0 +1,44 @@
+import 'dart:convert';
+
+import 'package:flutter_data/flutter_data.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:fudiee/models/base/base.adapter.dart';
+import 'package:fudiee/models/product/product.model.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'category.model.g.dart';
+
+@JsonSerializable()
+@DataRepository([JsonBaseAdapter, CategoryAdapter])
+class Category extends DataModel<Category> {
+  @override
+  final int? id;
+  @JsonKey(
+    fromJson: _nameFromJson,
+  )
+  final String name;
+  final String? image;
+  final String parent;
+  final HasMany<Product>? products;
+
+  Category(
+      {this.id,
+      required this.name,
+      required this.image,
+      required this.parent,
+      this.products});
+
+  static String _nameFromJson(String? value) {
+    try {
+      return utf8.decode(value?.codeUnits ?? []);
+    } catch (e) {
+      return value ?? '';
+    }
+  }
+}
+
+mixin CategoryAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
+  static String basePath = 'order';
+  @override
+  String get baseUrl => '${super.baseUrl}/$basePath/';
+}

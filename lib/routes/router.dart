@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fudiee/screens/auth/auth.screen.dart';
 import 'package:fudiee/screens/cart/cart.screen.dart';
-import 'package:fudiee/screens/receipts/receipts.screen.dart';
+import 'package:fudiee/screens/receipt/receipt.screen.dart';
+import 'package:fudiee/screens/receipt/receipts.screen.dart';
 import 'package:fudiee/screens/splash/splash_screen.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -26,11 +27,22 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: ReceiptsScreen.routePath,
+        name: ReceiptsScreen.name,
         builder: (_, __) => const ReceiptsScreen(),
       ),
       GoRoute(
         path: CartScreen.routePath,
-        builder: (_, __) => const CartScreen(),
+        name: CartScreen.name,
+        builder: (_, state) {
+          return CartScreen();
+        },
+      ),
+      GoRoute(
+        path: ReceiptScreen.routePath,
+        name: ReceiptScreen.name,
+        builder: (_, state) {
+          return ReceiptScreen();
+        },
       ),
     ],
     debugLogDiagnostics: true,

@@ -1,24 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fudiee/constants/data.dart';
-import 'package:fudiee/screens/home/views/cart/components/cartitem/cart_item.dart';
+import 'package:fudiee/main.data.dart';
+import 'package:fudiee/models/category/active_category.model.dart';
+import 'package:fudiee/models/receipt/active_receipt.model.dart';
+import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/home/views/home/components/header_section.dart';
-import 'package:fudiee/screens/home/widgets/category_card.dart';
+import 'package:fudiee/screens/receipt/receipt.screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:fudiee/widgets/categories.widget.dart';
+import 'package:fudiee/widgets/products.widget.dart';
+import 'package:fudiee/widgets/progress_indicator.widget.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
   static String routePath = '/cart';
+  static String name = 'CartScreen';
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
-  String seletedCategory = 'Pizza';
-  List<String> favorites = [];
   @override
   Widget build(BuildContext context) {
+    final activeCategory = ref.watch(activeCategoryProvider);
+
+    if (activeCategory == null) {
+      return ProgressIndicatorWidget();
+    }
+    debugPrint('activeCategory: $activeCategory');
+    final state = ref.categories.watchOne(activeCategory);
+    if (state.isLoading) {
+      return ProgressIndicatorWidget();
+    }
+    final products = state.model?.products?.toList() ?? [];
+    final activeReceipt = ref.watch(activeReceiptProvider);
+    final receiptTotal = activeReceipt?.getTotal() ?? 0;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -30,6 +47,108 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           ),
         ),
       ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withAlpha((0.2 * 255).toInt()),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: const Offset(0, -1),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Сума: $receiptTotal грн',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                debugPrint('onPressed->toReceipt');
+                final router = ref.read(appRouterProvider);
+                router.pushNamed(ReceiptScreen.name);
+              },
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 45),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'До Чеку',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: Container(
+      //   height: 50,
+      //   margin: const EdgeInsets.all(10),
+      //   child: ElevatedButton(
+      //     onPressed: () {},
+      //     child: const Center(
+      //       child: Text('Hellosss'),
+      //     ),
+      //   ),
+      // ),
+      // bottomNavigationBar: BottomAppBar(
+      //   color: Colors.amber,
+      //   child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //       children: <Widget>[
+      //         Row(children: [
+      //           FloatingActionButton.extended(
+      //             heroTag: UniqueKey(),
+      //             onPressed: () {},
+      //             label: Text('Зберегти'),
+      //             icon: Icon(Icons.save),
+      //           ),
+      //           SizedBox(
+      //             width: 12,
+      //           ),
+      //           FloatingActionButton.extended(
+      //             heroTag: UniqueKey(),
+      //             onPressed: () {},
+      //             label: Text('Відхилити'),
+      //             icon: Icon(Icons.cancel),
+      //           ),
+      //           DropdownButton<String>(
+      //             value: 'Оплата Готівкою',
+      //             icon: const Icon(Icons.arrow_downward),
+      //             elevation: 16,
+      //             style: const TextStyle(color: Colors.deepPurple),
+      //             underline: Container(
+      //               height: 2,
+      //               color: Colors.deepPurpleAccent,
+      //             ),
+      //             onChanged: (String? value) {
+      //               // This is called when the user selects an item.
+      //             },
+      //             items: [
+      //               DropdownMenuItem<String>(
+      //                 value: 'Оплата Готівкою',
+      //                 child: Text('Оплата Готівкою'),
+      //               ),
+      //               DropdownMenuItem<String>(
+      //                 value: 'Оплата Карткою',
+      //                 child: Text('Оплата Карткою'),
+      //               ),
+      //             ],
+      //           )
+      //         ])
+      //       ]),
+      // ),
       body: Column(
         children: [
           const SizedBox(height: 15),
@@ -41,28 +160,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           // categories section
           SizedBox(
             height: 115,
-            child: ListView.separated(
-              clipBehavior: Clip.none,
-              physics: const BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: 4,
-              separatorBuilder: (context, index) => const SizedBox(width: 23),
-              itemBuilder: (context, index) {
-                final category = categoryData[index];
-                return CategoryCard(
-                  category: category.category,
-                  image: category.image,
-                  onSelected: (value) {
-                    setState(() {
-                      if (value) {
-                        seletedCategory = category.category;
-                      }
-                    });
-                  },
-                  selected: seletedCategory == category.category ? true : false,
-                );
-              },
-            ),
+            child: CategoriesWidget(),
           ),
 
           const SizedBox(
@@ -76,26 +174,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(4),
-                child: ListView.separated(
-                  separatorBuilder: (_, __) => const SizedBox(
-                    height: 10,
-                  ),
-                  physics: const NeverScrollableScrollPhysics(),
-                  restorationId: 'cart_view',
-                  shrinkWrap: true,
-                  itemCount: cartData.length,
-                  itemBuilder: (context, index) {
-                    final cart = cartData[index];
-                    return CartItem(
-                      index: index,
-                      title: cart.title,
-                      desc: cart.desc,
-                      image: cart.image,
-                      price: cart.price,
-                      rating: cart.rating,
-                      canDelete: false,
-                    );
-                  },
+                child: ProductsWidget(
+                  products: products,
                 ),
               ),
             ),

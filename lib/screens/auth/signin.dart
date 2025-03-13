@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/user/user.model.dart';
 import 'package:fudiee/routes/router.dart';
-import 'package:fudiee/screens/onboarding/onboarding_screen.dart';
-import 'package:fudiee/screens/receipts/receipts.screen.dart';
+import 'package:fudiee/screens/receipt/receipts.screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:fudiee/widgets/buttons/app_button_widget.dart';
 import 'package:fudiee/widgets/textfield/app_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -84,7 +84,7 @@ class _SignInState extends ConsumerState<SignIn> {
               ],
             ),
             const SizedBox(height: 8),
-            AppButton(
+            AppButtonWidget(
               text: 'Ввійти',
               onPressed: () async {
                 final user = await ref.users.jsonUserAdapter.signIn(

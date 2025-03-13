@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fudiee/screens/home/widgets/category_card.dart';
+import 'package:fudiee/widgets/category_card.widget.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:fudiee/widgets/buttons/app_icon_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

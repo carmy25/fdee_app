@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:fudiee/screens/home/views/cart/components/cartitem/components/price_and_cart_actions.dart';
-import './components/build_image.dart';
+import 'package:fudiee/models/product/product.model.dart';
+import 'package:fudiee/models/receipt/active_receipt.model.dart';
+import 'package:fudiee/screens/home/views/cart/components/cartitem/components/build_image.dart';
+import 'package:fudiee/widgets/price_and_prod_item_actions.widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CartItem extends ConsumerWidget {
-  const CartItem(
-      {super.key,
-      required this.index,
-      required this.image,
-      required this.title,
-      required this.desc,
-      required this.price,
-      required this.rating,
-      this.canDelete = true});
+class ProductItemWidget extends ConsumerWidget {
+  const ProductItemWidget(
+      {super.key, required this.product, this.canDelete = true});
 
-  final int index;
-  final String image;
-  final String title;
-  final String desc;
-  final double price;
-  final double rating;
+  final Product product;
   final bool canDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final activeReceipt = ref.watch(activeReceiptProvider);
+    if (activeReceipt == null) {
+      return const Center(
+        child: Text('No active receipt'),
+      );
+    }
+    final productAmount =
+        ref.read(activeReceiptProvider.notifier).getProductItemAmount(product);
+    final productTotal = double.parse(product.price) * productAmount;
     return Column(
       children: [
         Row(
           children: [
-            BuildImage(image: image),
+            BuildImage(image: product.image ?? 'assets/images/cake1.png'),
             const SizedBox(
               width: 8,
             ),
@@ -39,7 +38,7 @@ class CartItem extends ConsumerWidget {
                 children: [
                   Flexible(
                       child: Text(
-                    title,
+                    product.name,
                     textAlign: TextAlign.left,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -59,12 +58,11 @@ class CartItem extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            BuildPriceAndCartActions(
-              price: price,
-              index: index,
+            PriceAndProdItemActionsWidget(
+              product: product,
             ),
             Text(
-              '₴${price.round()}',
+              '₴$productTotal',
               style: const TextStyle(
                 fontSize: 23,
                 fontWeight: FontWeight.bold,

@@ -20,7 +20,9 @@ class User extends DataModel<User> {
 
 mixin JsonUserAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   @override
-  String get baseUrl => 'http://192.168.5.153:8000/user/api-token-auth/';
+  String get baseUrl => '${const String.fromEnvironment(
+        "BE_HOST",
+      )}/user/api-token-auth/';
   Future<User?> signIn({
     required String username,
     required String password,
