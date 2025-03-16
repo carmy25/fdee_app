@@ -72,9 +72,9 @@ extension ProductRelationshipGraphNodeX on RelationshipGraphNode<Product> {
 // **************************************************************************
 
 Product _$ProductFromJson(Map<String, dynamic> json) => Product(
-      id: (json['id'] as num?)?.toInt(),
+      id: (json['id'] as num).toInt(),
       name: Product._nameFromJson(json['name'] as String?),
-      price: json['price'] as String,
+      price: json['price'] as num,
       category: json['category'] as String,
       image: json['image'] as String?,
       categoryObject: json['categoryObject'] == null

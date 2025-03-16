@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fudiee/models/category/category.model.dart';
 import 'package:fudiee/models/place/place.model.dart';
+import 'package:fudiee/models/product/product_item.model.dart';
 import 'package:fudiee/models/product/product.model.dart';
 import 'package:fudiee/models/receipt/receipt.model.dart';
 import 'package:fudiee/models/user/user.model.dart';
@@ -35,6 +36,7 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({FutureFn<Str
 final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
   'categories': categoriesRepositoryProvider,
 'places': placesRepositoryProvider,
+'productItems': productItemsRepositoryProvider,
 'products': productsRepositoryProvider,
 'receipts': receiptsRepositoryProvider,
 'users': usersRepositoryProvider
@@ -44,11 +46,12 @@ final repositoryInitializerProvider =
   FutureProvider<RepositoryInitializer>((ref) async {
     DataHelpers.setInternalType<Category>('categories');
     DataHelpers.setInternalType<Place>('places');
+    DataHelpers.setInternalType<ProductItem>('productItems');
     DataHelpers.setInternalType<Product>('products');
     DataHelpers.setInternalType<Receipt>('receipts');
     DataHelpers.setInternalType<User>('users');
-    final adapters = <String, RemoteAdapter>{'categories': ref.watch(internalCategoriesRemoteAdapterProvider), 'places': ref.watch(internalPlacesRemoteAdapterProvider), 'products': ref.watch(internalProductsRemoteAdapterProvider), 'receipts': ref.watch(internalReceiptsRemoteAdapterProvider), 'users': ref.watch(internalUsersRemoteAdapterProvider)};
-    final remotes = <String, bool>{'categories': true, 'places': true, 'products': true, 'receipts': true, 'users': true};
+    final adapters = <String, RemoteAdapter>{'categories': ref.watch(internalCategoriesRemoteAdapterProvider), 'places': ref.watch(internalPlacesRemoteAdapterProvider), 'productItems': ref.watch(internalProductItemsRemoteAdapterProvider), 'products': ref.watch(internalProductsRemoteAdapterProvider), 'receipts': ref.watch(internalReceiptsRemoteAdapterProvider), 'users': ref.watch(internalUsersRemoteAdapterProvider)};
+    final remotes = <String, bool>{'categories': true, 'places': true, 'productItems': true, 'products': true, 'receipts': true, 'users': true};
 
     await ref.watch(graphNotifierProvider).initialize();
 
@@ -68,6 +71,7 @@ final repositoryInitializerProvider =
 extension RepositoryWidgetRefX on WidgetRef {
   Repository<Category> get categories => watch(categoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Place> get places => watch(placesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<ProductItem> get productItems => watch(productItemsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Product> get products => watch(productsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Receipt> get receipts => watch(receiptsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch;
@@ -77,6 +81,7 @@ extension RepositoryRefX on Ref {
 
   Repository<Category> get categories => watch(categoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Place> get places => watch(placesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<ProductItem> get productItems => watch(productItemsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Product> get products => watch(productsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Receipt> get receipts => watch(receiptsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<User> get users => watch(usersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;

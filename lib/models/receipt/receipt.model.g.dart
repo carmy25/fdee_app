@@ -61,12 +61,12 @@ Receipt _$ReceiptFromJson(Map<String, dynamic> json) => Receipt(
       id: (json['id'] as num?)?.toInt(),
       place: (json['place'] as num?)?.toInt(),
       number: json['number'] as num?,
-      createdAt: Receipt._createdAtFromJson(json['created_at'] as String),
       price: (json['price'] as num?)?.toDouble() ?? 0,
-      productItems: (json['product_items'] as List<dynamic>)
-          .map((e) => ProductItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      createdAt: Receipt._createdAtFromJson(json['created_at'] as String),
+      productItems:
+          Receipt._productItemsFromJson(json['product_items'] as List),
       paymentMethod: json['payment_method'] as String,
+      status: json['status'] as String,
       placeName: Receipt._placeNameFromJson(json['place_name'] as String?),
     );
 
@@ -74,9 +74,9 @@ Map<String, dynamic> _$ReceiptToJson(Receipt instance) => <String, dynamic>{
       'id': instance.id,
       'place': instance.place,
       'number': instance.number,
+      'status': instance.status,
       'created_at': Receipt._createdAtToJson(instance.createdAt),
       'payment_method': instance.paymentMethod,
       'price': instance.price,
-      'place_name': instance.placeName,
-      'product_items': instance.productItems,
+      'product_items': Receipt._productItemsToJson(instance.productItems),
     };

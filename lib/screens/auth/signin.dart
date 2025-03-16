@@ -5,7 +5,7 @@ import 'package:fudiee/models/user/user.model.dart';
 import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/receipt/receipts.screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
-import 'package:fudiee/widgets/buttons/app_button_widget.dart';
+import 'package:fudiee/widgets/buttons/app_button.widget.dart';
 import 'package:fudiee/widgets/textfield/app_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

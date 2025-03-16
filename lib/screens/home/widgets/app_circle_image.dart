@@ -1,27 +1,21 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class AppCircleImage extends ConsumerWidget {
+class AppCircleImage extends StatelessWidget {
   const AppCircleImage({
     super.key,
     required this.image,
+    this.isImageFromInternet = false,
   });
 
   final String image;
+  final bool isImageFromInternet;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(30),
-      child: SizedBox(
-        height: 60,
-        width: 60,
-        child: Image.asset(
-          image,
-          fit: BoxFit.cover,
-        ),
-      ),
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: isImageFromInternet
+          ? Image.network(image, height: 60, width: 60, fit: BoxFit.cover)
+          : Image.asset(image, height: 60, width: 60, fit: BoxFit.cover),
     );
   }
 }

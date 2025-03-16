@@ -12,12 +12,12 @@ part 'product.model.g.dart';
 @DataRepository([JsonProductAdapter])
 class Product extends DataModel<Product> {
   @override
-  final int? id;
+  final int id;
   @JsonKey(
     fromJson: _nameFromJson,
   )
   final String name;
-  final String price;
+  final num price;
   final String category;
   final String? image;
   final BelongsTo<Category>? categoryObject;
@@ -30,7 +30,7 @@ class Product extends DataModel<Product> {
   }
 
   Product(
-      {this.id,
+      {required this.id,
       required this.name,
       required this.price,
       required this.category,

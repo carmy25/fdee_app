@@ -3,16 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/place/place.model.dart';
 
+class PlaceController extends ValueNotifier<Place?> {
+  PlaceController([super.value]);
+}
+
 class PlacesWidget extends ConsumerStatefulWidget {
-  const PlacesWidget({super.key});
+  const PlacesWidget({super.key, required this.controller});
+
+  final PlaceController controller;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PlacesWidgetState();
 }
 
 class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
-  Place? selectedPlace;
-
   @override
   Widget build(BuildContext context) {
     final placesState = ref.places.watchAll();
@@ -38,7 +42,7 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: DropdownButton<Place?>(
-        value: selectedPlace,
+        value: widget.controller.value,
         hint: const Text(
           'Місце',
           style: TextStyle(fontSize: 20, color: Colors.white),
@@ -57,7 +61,7 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
         ],
         onChanged: (Place? newValue) {
           setState(() {
-            selectedPlace = newValue;
+            widget.controller.value = newValue;
           });
         },
         style: const TextStyle(fontSize: 20),

@@ -1,16 +1,36 @@
+import 'dart:convert';
+
+import 'package:flutter_data/flutter_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'product_item.model.g.dart';
 
 @JsonSerializable()
-class ProductItem {
+@DataRepository([])
+class ProductItem extends DataModel<ProductItem> {
+  @override
   final int? id;
-  final String price;
+  final num price;
   final int amount;
+  @JsonKey(
+    fromJson: _nameFromJson,
+  )
   final String name;
   final String? image;
-  final int? productId;
+  @JsonKey(
+    name: 'product_type',
+  )
+  final int productId;
   final int? receiptId;
+
+  static String _nameFromJson(String? value) {
+    try {
+      return utf8.decode(value?.codeUnits ?? []);
+    } catch (e) {
+      return value ?? '';
+    }
+  }
+
   ProductItem(
       {this.id,
       required this.name,
@@ -21,6 +41,4 @@ class ProductItem {
       this.receiptId});
 
   Map<String, dynamic> toJson() => _$ProductItemToJson(this);
-  factory ProductItem.fromJson(Map<String, dynamic> json) =>
-      _$ProductItemFromJson(json);
 }

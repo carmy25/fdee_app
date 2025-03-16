@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/category/active_category.model.dart';
-import 'package:fudiee/models/category/category.model.dart';
 import 'package:fudiee/widgets/category_card.widget.dart';
 import 'package:fudiee/widgets/progress_indicator.widget.dart';
 
@@ -43,6 +42,7 @@ class _CategoriesWidgetState extends ConsumerState<CategoriesWidget> {
         return CategoryCard(
           category: category.name,
           image: category.image ?? 'assets/images/cake1.png',
+          isImageFromInternet: category.image != null,
           onSelected: (value) {
             setState(() {
               if (value) {

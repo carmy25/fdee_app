@@ -23,22 +23,32 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.receipts.watchAll(syncLocal: true);
+    final router = ref.read(appRouterProvider);
     final receiptsBody = state.isLoading
         ? ProgressIndicatorWidget()
         : ListView.separated(
+            reverse: true,
             itemCount: state.model.length,
             separatorBuilder: (context, index) => const Divider(height: 0),
             itemBuilder: (context, index) {
               final receipt = state.model[index];
-              final paymentMethod = 'Готівка';
+              final paymentMethod =
+                  receipt.paymentMethod == 'CARD' ? 'Картка' : 'Готівка';
               return ListTile(
                 leading: CircleAvatar(child: Text(receipt.id.toString())),
                 title: Text(
-                    '${receipt.placeName!.isEmpty ? 'З собою' : receipt.placeName}. $paymentMethod: ${receipt.price}'),
+                    '${(receipt.placeName?.isEmpty ?? true) ? 'З собою' : receipt.placeName}. $paymentMethod: ${receipt.price}'),
                 subtitle: Text(
-                    DateFormat('dd-MM-yy – kk:mm').format(receipt.createdAt!)),
-                trailing: const Icon(Icons.close_rounded),
-                onTap: () {},
+                    DateFormat('dd-MM-yy – kk:mm').format(receipt.createdAt)),
+                trailing: Icon(receipt.status == 'CLOSED'
+                    ? Icons.check_circle
+                    : Icons.local_activity),
+                onTap: () {
+                  final activeReceipt =
+                      ref.read(activeReceiptProvider.notifier);
+                  activeReceipt.setActive(receipt);
+                  router.push(CartScreen.routePath);
+                },
               );
             },
           );
@@ -63,7 +73,9 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
             debugPrint('add receipt');
             final receipt = Receipt(
               paymentMethod: 'CARD',
+              status: 'OPEN',
               price: 0,
+              createdAt: DateTime.now(),
               productItems: [],
             );
             activeReceipt.setActive(receipt);

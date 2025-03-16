@@ -1,23 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
+import 'package:fudiee/models/receipt/receipt.model.dart';
 import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/receipt/receipts.screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:fudiee/widgets/buttons/receipt_action_button.widget.dart';
 import 'package:fudiee/widgets/places.widget.dart';
+import 'package:fudiee/widgets/payment_method_toggle.widget.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 import 'package:fudiee/widgets/products.widget.dart';
 
-class ReceiptScreen extends ConsumerWidget {
+class ReceiptScreen extends ConsumerStatefulWidget {
   const ReceiptScreen({super.key});
   static String routePath = '/receipt';
   static String name = 'ReceiptScreen';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _ReceiptScreenState();
+}
+
+class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
+  final PlaceController placeController = PlaceController();
+  final PaymentMethodController paymentMethodController =
+      PaymentMethodController();
+
+  void _onSavePressed(Receipt receipt) async {
+    debugPrint('onPressed->save_receipt');
+    await _onSave(receipt);
+  }
+
+  Future<void> _onSave(Receipt receipt, {String status = 'OPEN'}) async {
+    final updatedReceipt = receipt.copyWith(
+      placeName: placeController.value?.name,
+      placeId: placeController.value?.id,
+      paymentMethod: paymentMethodController.value,
+      status: status,
+    );
+    try {
+      await ref.receipts.save(updatedReceipt);
+    } catch (e) {
+      debugPrint('Error saving receipt: $e');
+    }
+    _goToReceipts();
+  }
+
+  void _onClosePressed(Receipt receipt) {
+    debugPrint('onPressed->close_receipt');
+    _onSave(receipt, status: 'CLOSED');
+  }
+
+  void _goToReceipts() {
+    final router = ref.read(appRouterProvider);
+    router.goNamed(ReceiptsScreen.name);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final activeReceipt = ref.watch(activeReceiptProvider);
     final receiptTotal = activeReceipt?.getTotal() ?? 0;
     return Scaffold(
@@ -59,79 +101,21 @@ class ReceiptScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    debugPrint('onPressed->reject');
-                    final router = ref.read(appRouterProvider);
-                    router.goNamed(ReceiptsScreen.name);
-                  },
-                  style: ElevatedButton.styleFrom(
+                ReceiptActionButtonWidget(
+                    onPressed: _goToReceipts,
                     backgroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 35),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  icon: const Icon(Icons.arrow_back,
-                      color: Colors.white, size: 30),
-                  label: const Text(
-                    'На головну',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    debugPrint('onPressed->toReceipts');
-                    final router = ref.read(appRouterProvider);
-                    router.goNamed(ReceiptsScreen.name);
-                  },
-                  style: ElevatedButton.styleFrom(
+                    text: 'На головну',
+                    icon: Icons.arrow_back),
+                ReceiptActionButtonWidget(
+                    onPressed: () => _onSavePressed(activeReceipt!),
                     backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 35),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  icon: const Icon(Icons.save, color: Colors.white, size: 30),
-                  label: const Text(
-                    'Зберегти',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    debugPrint('onPressed->toReceipts');
-                    final router = ref.read(appRouterProvider);
-                    router.goNamed(ReceiptsScreen.name);
-                  },
-                  style: ElevatedButton.styleFrom(
+                    text: 'Зберегти',
+                    icon: Icons.save),
+                ReceiptActionButtonWidget(
+                    onPressed: () => _onClosePressed(activeReceipt!),
                     backgroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 35),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  icon: const Icon(Icons.check, color: Colors.white, size: 30),
-                  label: const Text(
-                    'Закрити',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                    text: 'Закрити',
+                    icon: Icons.check),
               ],
             ),
           ],
@@ -144,25 +128,8 @@ class ReceiptScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                PlacesWidget(),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8.0),
-                  child: ToggleSwitch(
-                    minWidth: 120.0,
-                    minHeight: 60.0,
-                    cornerRadius: 20.0,
-                    activeBgColor: [Colors.green],
-                    activeFgColor: Colors.white,
-                    inactiveBgColor: Colors.grey,
-                    inactiveFgColor: Colors.white,
-                    labels: const ['Карта', 'Готівка'],
-                    icons: const [Icons.credit_card, Icons.attach_money],
-                    initialLabelIndex: 0,
-                    onToggle: (index) {
-                      debugPrint('switched to: $index');
-                    },
-                  ),
-                ),
+                PlacesWidget(controller: placeController),
+                PaymentMethodToggle(controller: paymentMethodController),
               ],
             ),
           ),
@@ -170,7 +137,9 @@ class ReceiptScreen extends ConsumerWidget {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(4),
-                child: ProductsWidget(products: []),
+                child: ProductsWidget(
+                  useReceipt: true,
+                ),
               ),
             ),
           ),

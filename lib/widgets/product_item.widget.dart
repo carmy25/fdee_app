@@ -22,7 +22,7 @@ class ProductItemWidget extends ConsumerWidget {
     }
     final productAmount =
         ref.read(activeReceiptProvider.notifier).getProductItemAmount(product);
-    final productTotal = double.parse(product.price) * productAmount;
+    final productTotal = product.price * productAmount;
     return Column(
       children: [
         Row(

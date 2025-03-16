@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fudiee/main.data.dart';
-import 'package:fudiee/models/category/active_category.model.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
 import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/home/views/home/components/header_section.dart';
@@ -9,7 +7,6 @@ import 'package:fudiee/screens/receipt/receipt.screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:fudiee/widgets/categories.widget.dart';
 import 'package:fudiee/widgets/products.widget.dart';
-import 'package:fudiee/widgets/progress_indicator.widget.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -23,17 +20,6 @@ class CartScreen extends ConsumerStatefulWidget {
 class _CartScreenState extends ConsumerState<CartScreen> {
   @override
   Widget build(BuildContext context) {
-    final activeCategory = ref.watch(activeCategoryProvider);
-
-    if (activeCategory == null) {
-      return ProgressIndicatorWidget();
-    }
-    debugPrint('activeCategory: $activeCategory');
-    final state = ref.categories.watchOne(activeCategory);
-    if (state.isLoading) {
-      return ProgressIndicatorWidget();
-    }
-    final products = state.model?.products?.toList() ?? [];
     final activeReceipt = ref.watch(activeReceiptProvider);
     final receiptTotal = activeReceipt?.getTotal() ?? 0;
     return Scaffold(
@@ -174,9 +160,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(4),
-                child: ProductsWidget(
-                  products: products,
-                ),
+                child: ProductsWidget(),
               ),
             ),
           ),

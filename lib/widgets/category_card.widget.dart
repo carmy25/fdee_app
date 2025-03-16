@@ -10,12 +10,14 @@ class CategoryCard extends ConsumerWidget {
     required this.image,
     required this.selected,
     required this.onSelected,
+    this.isImageFromInternet = false,
   });
 
   final String category;
   final String image;
   final bool selected;
   final ValueChanged onSelected;
+  final bool isImageFromInternet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,12 +35,14 @@ class CategoryCard extends ConsumerWidget {
             onTap: () => onSelected(!selected),
             child: Ink(
               width: 119,
-              // alignment: Alignment.center,
               color: selected ? lightAmberColor : Colors.white,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AppCircleImage(image: image),
+                  AppCircleImage(
+                    image: image,
+                    isImageFromInternet: isImageFromInternet,
+                  ),
                   Text(category),
                 ],
               ),
