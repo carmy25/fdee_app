@@ -22,7 +22,7 @@ class PaymentMethodToggle extends StatelessWidget {
         activeFgColor: Colors.white,
         inactiveBgColor: Colors.grey,
         inactiveFgColor: Colors.white,
-        labels: const ['CARD', 'CASH'],
+        labels: const ['Картка', 'Готівка'],
         icons: const [Icons.credit_card, Icons.attach_money],
         initialLabelIndex: controller.value == 'CARD' ? 0 : 1,
         onToggle: (index) {

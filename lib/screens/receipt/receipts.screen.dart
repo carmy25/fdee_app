@@ -27,7 +27,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     final receiptsBody = state.isLoading
         ? ProgressIndicatorWidget()
         : ListView.separated(
-            reverse: true,
+            reverse: false,
             itemCount: state.model.length,
             separatorBuilder: (context, index) => const Divider(height: 0),
             itemBuilder: (context, index) {
