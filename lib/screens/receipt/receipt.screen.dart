@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/main.data.dart';
+import 'package:fudiee/models/place/place.model.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
 import 'package:fudiee/models/receipt/receipt.model.dart';
 import 'package:fudiee/routes/router.dart';
@@ -36,7 +37,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   Future<void> _onSave(Receipt receipt, {String status = 'OPEN'}) async {
     final updatedReceipt = receipt.copyWith(
       placeName: placeController.value?.name,
-      placeId: placeController.value?.id,
+      place: placeController.value?.id ?? 0,
       paymentMethod: paymentMethodController.value,
       status: status,
     );
@@ -62,6 +63,10 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   Widget build(BuildContext context) {
     final activeReceipt = ref.watch(activeReceiptProvider);
     final receiptTotal = activeReceipt?.getTotal() ?? 0;
+    paymentMethodController.value = activeReceipt?.paymentMethod ?? 'CASH';
+    placeController.value = activeReceipt?.place != null
+        ? Place(id: activeReceipt!.place, name: activeReceipt.placeName ?? '')
+        : null;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,

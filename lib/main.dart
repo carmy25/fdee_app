@@ -8,19 +8,37 @@ import 'package:flutter_data/flutter_data.dart';
 
 import 'package:fudiee/main.data.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(ProviderScope(overrides: [
-    configureRepositoryLocalStorage(
-      baseDirFn: () =>
-          getApplicationDocumentsDirectory().then((dir) => dir.path),
-      encryptionKey: null,
-      // whether to clear all local storage during initialization
-      clear: LocalStorageClearStrategy.never,
-    )
-  ], child: const MyApp()));
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://6f210b0b54c7ce73fd8beb9b47fe1baf@o4508295598309376.ingest.us.sentry.io/4508997581668352';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+      // The sampling rate for profiling is relative to tracesSampleRate
+      // Setting to 1.0 will profile 100% of sampled transactions:
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(ProviderScope(
+      overrides: [
+        configureRepositoryLocalStorage(
+          baseDirFn: () =>
+              getApplicationDocumentsDirectory().then((dir) => dir.path),
+          encryptionKey: null,
+          // whether to clear all local storage during initialization
+          clear: LocalStorageClearStrategy.never,
+        )
+      ],
+      child: SentryWidget(
+        child: const MyApp(),
+      ),
+    )),
+  );
 }
 
 class MyApp extends ConsumerWidget {

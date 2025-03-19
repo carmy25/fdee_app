@@ -24,9 +24,12 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
       return const CircularProgressIndicator();
     }
     final places = placesState.model;
-    if (places.isEmpty) {
-      return const Text('No places found');
-    }
+    final menuItems = places.map((e) {
+      return DropdownMenuItem<Place?>(
+        value: e,
+        child: Text(e.name),
+      );
+    }).toList();
     return Container(
       decoration: BoxDecoration(
         color: Colors.black,
@@ -42,7 +45,11 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: DropdownButton<Place?>(
-        value: widget.controller.value,
+        value: widget.controller.value != null
+            ? menuItems
+                .firstWhere((e) => e.value?.id == widget.controller.value?.id)
+                .value
+            : null,
         hint: const Text(
           'Місце',
           style: TextStyle(fontSize: 20, color: Colors.white),
@@ -52,12 +59,7 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
             value: null,
             child: Text('З собою'),
           ),
-          ...places.map((place) {
-            return DropdownMenuItem<Place?>(
-              value: place,
-              child: Text(place.name),
-            );
-          }),
+          ...menuItems,
         ],
         onChanged: (Place? newValue) {
           setState(() {

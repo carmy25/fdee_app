@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AppCircleImage extends StatelessWidget {
@@ -14,7 +15,14 @@ class AppCircleImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipOval(
       child: isImageFromInternet
-          ? Image.network(image, height: 60, width: 60, fit: BoxFit.cover)
+            ? CachedNetworkImage(
+              imageUrl: image,
+              height: 60,
+              width: 60,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            )
           : Image.asset(image, height: 60, width: 60, fit: BoxFit.cover),
     );
   }

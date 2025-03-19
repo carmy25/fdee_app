@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  sentry_flutter: ^8.14.0
   flutter:
     sdk: flutter
 
@@ -56,8 +57,11 @@ dependencies:
   shared_preferences: ^2.3.3
   freezed_annotation: ^2.4.4
   intl: ^0.20.2
+  cached_network_image: ^3.4.1
+  flutter_cache_manager: ^3.4.1
 
 dev_dependencies:
+  sentry_dart_plugin: ^2.4.1
   flutter_test:
     sdk: flutter
 
@@ -131,3 +135,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: true
+  project: fudiee
+  org: crchemistgmailcom

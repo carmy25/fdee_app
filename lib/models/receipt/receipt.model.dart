@@ -111,12 +111,11 @@ class Receipt extends DataModel<Receipt> {
     String? placeName,
     String? status,
     List<ProductItem>? productItems,
-    int? placeId,
   }) {
     return Receipt(
       id: id ?? this.id,
       status: status ?? this.status,
-      place: place ?? this.place,
+      place: place == 0 ? null : this.place,
       number: number ?? this.number,
       createdAt: createdAt ?? this.createdAt,
       paymentMethod: paymentMethod ?? this.paymentMethod,

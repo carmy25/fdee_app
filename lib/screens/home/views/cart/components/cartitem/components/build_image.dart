@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fudiee/screens/home/widgets/fadein_image.dart';
@@ -19,7 +20,9 @@ class BuildImage extends ConsumerWidget {
         width: 60,
         height: 60,
         child: AppFadeinImageView(
-          image: AssetImage(image),
+          image: image.startsWith('http')
+              ? CachedNetworkImageProvider(image)
+              : AssetImage(image) as ImageProvider,
         ),
       ),
     );

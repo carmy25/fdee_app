@@ -20,6 +20,16 @@ class ReceiptsScreen extends ConsumerStatefulWidget {
 }
 
 class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
+  _getPaymentMethodText(Receipt receipt) {
+    final paymentMethod = receipt.paymentMethod;
+    if (paymentMethod == 'CARD') {
+      return 'Картка';
+    } else if (paymentMethod == 'CASH') {
+      return 'Готівка';
+    }
+    return 'Переказ';
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.receipts.watchAll(syncLocal: true);
@@ -32,8 +42,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
             separatorBuilder: (context, index) => const Divider(height: 0),
             itemBuilder: (context, index) {
               final receipt = state.model[index];
-              final paymentMethod =
-                  receipt.paymentMethod == 'CARD' ? 'Картка' : 'Готівка';
+              final paymentMethod = _getPaymentMethodText(receipt);
               return ListTile(
                 leading: CircleAvatar(child: Text(receipt.id.toString())),
                 title: Text(
