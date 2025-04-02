@@ -35,11 +35,16 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   Future<void> _onSave(Receipt receipt, {String status = 'OPEN'}) async {
+    final placeId = placeController.value?.id;
+    final placeName = placeController.value?.name;
+    final price = receipt.getTotal();
+
     final updatedReceipt = receipt.copyWith(
-      placeName: placeController.value?.name,
-      place: placeController.value?.id ?? 0,
       paymentMethod: paymentMethodController.value,
       status: status,
+      place: placeId,
+      price: price,
+      placeName: placeName,
     );
     try {
       await ref.receipts.save(updatedReceipt);

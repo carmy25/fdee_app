@@ -9,6 +9,10 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'receipt.model.g.dart';
 
+class _Sentinel {
+  const _Sentinel();
+}
+
 @JsonSerializable()
 @DataRepository([JsonBaseAdapter, ReceiptAdapter])
 class Receipt extends DataModel<Receipt> {
@@ -102,25 +106,31 @@ class Receipt extends DataModel<Receipt> {
   }
 
   Receipt copyWith({
-    int? id,
-    int? place,
-    num? number,
-    DateTime? createdAt,
-    String? paymentMethod,
-    double? price,
-    String? placeName,
-    String? status,
+    Object? id = const _Sentinel(),
+    Object? place = const _Sentinel(),
+    Object? number = const _Sentinel(),
+    Object? createdAt = const _Sentinel(),
+    Object? paymentMethod = const _Sentinel(),
+    Object? price = const _Sentinel(),
+    Object? placeName = const _Sentinel(),
+    Object? status = const _Sentinel(),
     List<ProductItem>? productItems,
   }) {
     return Receipt(
-      id: id ?? this.id,
-      status: status ?? this.status,
-      place: place == 0 ? null : this.place,
-      number: number ?? this.number,
-      createdAt: createdAt ?? this.createdAt,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
-      price: price ?? this.price,
-      placeName: placeName ?? this.placeName,
+      id: id == const _Sentinel() ? this.id : id as int?,
+      status: status == const _Sentinel() ? this.status : status as String,
+      place: place == const _Sentinel() ? this.place : place as int?,
+      number: number == const _Sentinel() ? this.number : number as num?,
+      createdAt: createdAt == const _Sentinel()
+          ? this.createdAt
+          : createdAt as DateTime,
+      paymentMethod: paymentMethod == const _Sentinel()
+          ? this.paymentMethod
+          : paymentMethod as String,
+      price: price == const _Sentinel() ? this.price : price as double,
+      placeName: placeName == const _Sentinel()
+          ? this.placeName
+          : placeName as String?,
       productItems: productItems ?? this.productItems,
     );
   }

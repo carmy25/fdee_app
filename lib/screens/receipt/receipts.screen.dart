@@ -30,41 +30,69 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     return 'Переказ';
   }
 
+  Widget buildReceiptList(List<Receipt> receipts) {
+    final router = ref.read(appRouterProvider);
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      reverse: false,
+      itemCount: receipts.length,
+      separatorBuilder: (context, index) => const Divider(height: 0),
+      itemBuilder: (context, index) {
+        final receipt = receipts[index];
+        final paymentMethod = _getPaymentMethodText(receipt);
+        return ListTile(
+          leading: CircleAvatar(child: Text(receipt.id.toString())),
+          title: Text(
+              '${(receipt.placeName?.isEmpty ?? true) ? 'З собою' : receipt.placeName}. $paymentMethod: ${receipt.price}'),
+          subtitle:
+              Text(DateFormat('dd-MM-yy – kk:mm').format(receipt.createdAt)),
+          trailing: Icon(receipt.status == 'CLOSED'
+              ? Icons.check_circle
+              : Icons.local_activity),
+          onTap: () {
+            final activeReceipt = ref.read(activeReceiptProvider.notifier);
+            activeReceipt.setActive(receipt);
+            router.push(CartScreen.routePath);
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.receipts.watchAll(syncLocal: true);
-    final router = ref.read(appRouterProvider);
-    final receiptsBody = state.isLoading
-        ? ProgressIndicatorWidget()
-        : ListView.separated(
-            reverse: false,
-            itemCount: state.model.length,
-            separatorBuilder: (context, index) => const Divider(height: 0),
-            itemBuilder: (context, index) {
-              final receipt = state.model[index];
-              final paymentMethod = _getPaymentMethodText(receipt);
-              return ListTile(
-                leading: CircleAvatar(child: Text(receipt.id.toString())),
-                title: Text(
-                    '${(receipt.placeName?.isEmpty ?? true) ? 'З собою' : receipt.placeName}. $paymentMethod: ${receipt.price}'),
-                subtitle: Text(
-                    DateFormat('dd-MM-yy – kk:mm').format(receipt.createdAt)),
-                trailing: Icon(receipt.status == 'CLOSED'
-                    ? Icons.check_circle
-                    : Icons.local_activity),
-                onTap: () {
-                  final activeReceipt =
-                      ref.read(activeReceiptProvider.notifier);
-                  activeReceipt.setActive(receipt);
-                  router.push(CartScreen.routePath);
-                },
-              );
-            },
-          );
+
+    if (state.isLoading) {
+      return Scaffold(
+        backgroundColor: scaffoldBgColor,
+        appBar: AppBar(
+          backgroundColor: scaffoldBgColor,
+          automaticallyImplyLeading: false,
+          elevation: 2,
+          title: Center(
+            child: Text(
+              'Чеки',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+          ),
+        ),
+        body: ProgressIndicatorWidget(),
+      );
+    }
+
+    final openReceipts =
+        state.model.where((r) => r.status != 'CLOSED').toList();
+    final closedReceipts =
+        state.model.where((r) => r.status == 'CLOSED').toList();
+
     return Scaffold(
+      backgroundColor: scaffoldBgColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: scaffoldBgColor,
+        elevation: 2,
         title: Center(
           child: Text(
             'Чеки',
@@ -90,7 +118,73 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
             activeReceipt.setActive(receipt);
             router.push(CartScreen.routePath);
           }),
-      body: receiptsBody,
+      body: Column(
+        children: [
+          Expanded(
+            flex: 7,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFE6EEF8), // Darker blue tint
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Активні',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Expanded(child: buildReceiptList(openReceipts)),
+                ],
+              ),
+            ),
+          ),
+          Divider(thickness: 1, color: Colors.grey[300]),
+          Expanded(
+            flex: 3,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFDCE2DC), // Darker contrast for closed receipts
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Закриті',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Expanded(child: buildReceiptList(closedReceipts)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
