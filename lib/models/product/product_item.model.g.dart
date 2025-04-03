@@ -3,12 +3,12 @@
 part of 'product_item.model.dart';
 
 // **************************************************************************
-// RepositoryGenerator
+// AdapterGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
-mixin $ProductItemLocalAdapter on LocalAdapter<ProductItem> {
+mixin _$ProductItemAdapter on Adapter<ProductItem> {
   static final Map<String, RelationshipMeta> _kProductItemRelationshipMetas =
       {};
 
@@ -17,13 +17,13 @@ mixin $ProductItemLocalAdapter on LocalAdapter<ProductItem> {
       _kProductItemRelationshipMetas;
 
   @override
-  ProductItem deserialize(map) {
+  ProductItem deserializeLocal(map, {String? key}) {
     map = transformDeserialize(map);
-    return _$ProductItemFromJson(map);
+    return internalWrapStopInit(() => _$ProductItemFromJson(map), key: key);
   }
 
   @override
-  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
+  Map<String, dynamic> serializeLocal(model, {bool withRelationships = true}) {
     final map = model.toJson();
     return transformSerialize(map, withRelationships: withRelationships);
   }
@@ -31,21 +31,13 @@ mixin $ProductItemLocalAdapter on LocalAdapter<ProductItem> {
 
 final _productItemsFinders = <String, dynamic>{};
 
-// ignore: must_be_immutable
-class $ProductItemHiveLocalAdapter = HiveLocalAdapter<ProductItem>
-    with $ProductItemLocalAdapter;
+class $ProductItemAdapter = Adapter<ProductItem>
+    with _$ProductItemAdapter, NothingMixin;
 
-class $ProductItemRemoteAdapter = RemoteAdapter<ProductItem> with NothingMixin;
+final productItemsAdapterProvider = Provider<Adapter<ProductItem>>(
+    (ref) => $ProductItemAdapter(ref, InternalHolder(_productItemsFinders)));
 
-final internalProductItemsRemoteAdapterProvider =
-    Provider<RemoteAdapter<ProductItem>>((ref) => $ProductItemRemoteAdapter(
-        $ProductItemHiveLocalAdapter(ref),
-        InternalHolder(_productItemsFinders)));
-
-final productItemsRepositoryProvider =
-    Provider<Repository<ProductItem>>((ref) => Repository<ProductItem>(ref));
-
-extension ProductItemDataRepositoryX on Repository<ProductItem> {}
+extension ProductItemAdapterX on Adapter<ProductItem> {}
 
 extension ProductItemRelationshipGraphNodeX
     on RelationshipGraphNode<ProductItem> {}

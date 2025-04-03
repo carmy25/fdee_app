@@ -128,7 +128,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withAlpha((0.2 * 255).toInt()),
                     spreadRadius: 2,
                     blurRadius: 6,
                     offset: Offset(0, 2),
@@ -160,7 +160,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withAlpha((0.2 * 255).toInt()),
                     spreadRadius: 2,
                     blurRadius: 6,
                     offset: Offset(0, 2),

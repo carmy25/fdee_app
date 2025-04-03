@@ -3,12 +3,12 @@
 part of 'place.model.dart';
 
 // **************************************************************************
-// RepositoryGenerator
+// AdapterGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
-mixin $PlaceLocalAdapter on LocalAdapter<Place> {
+mixin _$PlaceAdapter on Adapter<Place> {
   static final Map<String, RelationshipMeta> _kPlaceRelationshipMetas = {};
 
   @override
@@ -16,13 +16,13 @@ mixin $PlaceLocalAdapter on LocalAdapter<Place> {
       _kPlaceRelationshipMetas;
 
   @override
-  Place deserialize(map) {
+  Place deserializeLocal(map, {String? key}) {
     map = transformDeserialize(map);
-    return _$PlaceFromJson(map);
+    return internalWrapStopInit(() => _$PlaceFromJson(map), key: key);
   }
 
   @override
-  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
+  Map<String, dynamic> serializeLocal(model, {bool withRelationships = true}) {
     final map = _$PlaceToJson(model);
     return transformSerialize(map, withRelationships: withRelationships);
   }
@@ -30,23 +30,15 @@ mixin $PlaceLocalAdapter on LocalAdapter<Place> {
 
 final _placesFinders = <String, dynamic>{};
 
-// ignore: must_be_immutable
-class $PlaceHiveLocalAdapter = HiveLocalAdapter<Place> with $PlaceLocalAdapter;
+class $PlaceAdapter = Adapter<Place>
+    with _$PlaceAdapter, JsonBaseAdapter<Place>, PlaceAdapter<Place>;
 
-class $PlaceRemoteAdapter = RemoteAdapter<Place>
-    with JsonBaseAdapter<Place>, PlaceAdapter<Place>;
+final placesAdapterProvider = Provider<Adapter<Place>>(
+    (ref) => $PlaceAdapter(ref, InternalHolder(_placesFinders)));
 
-final internalPlacesRemoteAdapterProvider = Provider<RemoteAdapter<Place>>(
-    (ref) => $PlaceRemoteAdapter(
-        $PlaceHiveLocalAdapter(ref), InternalHolder(_placesFinders)));
-
-final placesRepositoryProvider =
-    Provider<Repository<Place>>((ref) => Repository<Place>(ref));
-
-extension PlaceDataRepositoryX on Repository<Place> {
-  JsonBaseAdapter<Place> get jsonBaseAdapter =>
-      remoteAdapter as JsonBaseAdapter<Place>;
-  PlaceAdapter<Place> get placeAdapter => remoteAdapter as PlaceAdapter<Place>;
+extension PlaceAdapterX on Adapter<Place> {
+  JsonBaseAdapter<Place> get jsonBaseAdapter => this as JsonBaseAdapter<Place>;
+  PlaceAdapter<Place> get placeAdapter => this as PlaceAdapter<Place>;
 }
 
 extension PlaceRelationshipGraphNodeX on RelationshipGraphNode<Place> {}

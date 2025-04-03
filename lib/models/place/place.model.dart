@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 
 import 'package:flutter_data/flutter_data.dart';
@@ -8,7 +10,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'place.model.g.dart';
 
 @JsonSerializable()
-@DataRepository([JsonBaseAdapter, PlaceAdapter])
+@DataAdapter([JsonBaseAdapter, PlaceAdapter])
 class Place extends DataModel<Place> {
   @override
   final int? id;
@@ -31,7 +33,7 @@ class Place extends DataModel<Place> {
   }
 }
 
-mixin PlaceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
+mixin PlaceAdapter<T extends DataModel<T>> on Adapter<T> {
   static String basePath = 'place';
   @override
   String get baseUrl => '${super.baseUrl}/$basePath/';

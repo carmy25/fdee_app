@@ -3,12 +3,12 @@
 part of 'user.model.dart';
 
 // **************************************************************************
-// RepositoryGenerator
+// AdapterGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
-mixin $UserLocalAdapter on LocalAdapter<User> {
+mixin _$UserAdapter on Adapter<User> {
   static final Map<String, RelationshipMeta> _kUserRelationshipMetas = {};
 
   @override
@@ -16,13 +16,13 @@ mixin $UserLocalAdapter on LocalAdapter<User> {
       _kUserRelationshipMetas;
 
   @override
-  User deserialize(map) {
+  User deserializeLocal(map, {String? key}) {
     map = transformDeserialize(map);
-    return _$UserFromJson(map);
+    return internalWrapStopInit(() => _$UserFromJson(map), key: key);
   }
 
   @override
-  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
+  Map<String, dynamic> serializeLocal(model, {bool withRelationships = true}) {
     final map = _$UserToJson(model);
     return transformSerialize(map, withRelationships: withRelationships);
   }
@@ -30,21 +30,13 @@ mixin $UserLocalAdapter on LocalAdapter<User> {
 
 final _usersFinders = <String, dynamic>{};
 
-// ignore: must_be_immutable
-class $UserHiveLocalAdapter = HiveLocalAdapter<User> with $UserLocalAdapter;
+class $UserAdapter = Adapter<User> with _$UserAdapter, JsonUserAdapter<User>;
 
-class $UserRemoteAdapter = RemoteAdapter<User> with JsonUserAdapter<User>;
+final usersAdapterProvider = Provider<Adapter<User>>(
+    (ref) => $UserAdapter(ref, InternalHolder(_usersFinders)));
 
-final internalUsersRemoteAdapterProvider = Provider<RemoteAdapter<User>>(
-    (ref) => $UserRemoteAdapter(
-        $UserHiveLocalAdapter(ref), InternalHolder(_usersFinders)));
-
-final usersRepositoryProvider =
-    Provider<Repository<User>>((ref) => Repository<User>(ref));
-
-extension UserDataRepositoryX on Repository<User> {
-  JsonUserAdapter<User> get jsonUserAdapter =>
-      remoteAdapter as JsonUserAdapter<User>;
+extension UserAdapterX on Adapter<User> {
+  JsonUserAdapter<User> get jsonUserAdapter => this as JsonUserAdapter<User>;
 }
 
 extension UserRelationshipGraphNodeX on RelationshipGraphNode<User> {}

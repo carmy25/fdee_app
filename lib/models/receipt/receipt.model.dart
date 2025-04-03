@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -14,7 +16,7 @@ class _Sentinel {
 }
 
 @JsonSerializable()
-@DataRepository([JsonBaseAdapter, ReceiptAdapter])
+@DataAdapter([JsonBaseAdapter, ReceiptAdapter])
 class Receipt extends DataModel<Receipt> {
   @override
   final int? id;
@@ -142,7 +144,7 @@ class Receipt extends DataModel<Receipt> {
   }
 }
 
-mixin ReceiptAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
+mixin ReceiptAdapter<T extends DataModel<T>> on Adapter<T> {
   static String basePath = 'order';
 
   @override

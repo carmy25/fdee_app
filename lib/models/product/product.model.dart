@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 
 import 'package:flutter_data/flutter_data.dart';
@@ -9,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'product.model.g.dart';
 
 @JsonSerializable()
-@DataRepository([JsonProductAdapter])
+@DataAdapter([JsonProductAdapter])
 class Product extends DataModel<Product> {
   @override
   final int id;
@@ -38,7 +40,7 @@ class Product extends DataModel<Product> {
       required this.categoryObject});
 }
 
-mixin JsonProductAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
+mixin JsonProductAdapter<T extends DataModel<T>> on Adapter<T> {
   @override
   String get baseUrl => '${const String.fromEnvironment(
         'BE_HOST',

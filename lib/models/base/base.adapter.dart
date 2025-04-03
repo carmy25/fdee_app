@@ -2,7 +2,7 @@ import 'package:flutter_data/flutter_data.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-mixin JsonBaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
+mixin JsonBaseAdapter<T extends DataModel<T>> on Adapter<T> {
   @override
   String get baseUrl => const String.fromEnvironment(
         'BE_HOST',

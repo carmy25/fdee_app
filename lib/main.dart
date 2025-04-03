@@ -26,12 +26,14 @@ void main() async {
     },
     appRunner: () => runApp(ProviderScope(
       overrides: [
-        configureRepositoryLocalStorage(
-          baseDirFn: () =>
-              getApplicationDocumentsDirectory().then((dir) => dir.path),
-          encryptionKey: null,
-          // whether to clear all local storage during initialization
-          clear: LocalStorageClearStrategy.never,
+        localStorageProvider.overrideWithValue(
+          LocalStorage(
+            baseDirFn: () async {
+              return (await getApplicationSupportDirectory()).path;
+            },
+            busyTimeout: 5000,
+            clear: LocalStorageClearStrategy.never,
+          ),
         )
       ],
       child: SentryWidget(
@@ -47,7 +49,8 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final routerConfig = ref.watch(appRouterProvider);
-    final repoInitializer = ref.watch(repositoryInitializerProvider);
+    final repoInitializer =
+        ref.watch(initializeFlutterData(adapterProvidersMap));
     return repoInitializer.when(
         loading: () => const CircularProgressIndicator(),
         error: (error, _) => Text(error.toString()),
