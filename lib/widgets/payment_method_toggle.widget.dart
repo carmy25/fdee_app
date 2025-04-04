@@ -38,11 +38,11 @@ class PaymentMethodToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final initialLabelIndex = _getInitialIndex();
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8.0),
+    return Flexible(
       child: ToggleSwitch(
-        minWidth: 120.0,
-        minHeight: 60.0,
+        minWidth: 90.0,
+        minHeight: 55.0,
+        fontSize: 14.0,
         cornerRadius: 20.0,
         activeBgColor: [Colors.green],
         activeFgColor: Colors.white,

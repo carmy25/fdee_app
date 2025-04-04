@@ -34,7 +34,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     final router = ref.read(appRouterProvider);
     return ListView.separated(
       shrinkWrap: true,
-      physics: ClampingScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       reverse: false,
       itemCount: receipts.length,
       separatorBuilder: (context, index) => const Divider(height: 0),
@@ -118,24 +118,23 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
             activeReceipt.setActive(receipt);
             router.push(CartScreen.routePath);
           }),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 7,
-            child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
               decoration: BoxDecoration(
-                color: Color(0xFFE6EEF8), // Darker blue tint
+                color: const Color(0xFFE6EEF8), // Darker blue tint
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withAlpha((0.2 * 255).toInt()),
                     spreadRadius: 2,
                     blurRadius: 6,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -146,28 +145,29 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  Expanded(child: buildReceiptList(openReceipts)),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    child: buildReceiptList(openReceipts),
+                  ),
                 ],
               ),
             ),
-          ),
-          Divider(thickness: 1, color: Colors.grey[300]),
-          Expanded(
-            flex: 3,
-            child: Container(
+            Divider(thickness: 1, color: Colors.grey[300]),
+            Container(
               decoration: BoxDecoration(
-                color: Color(0xFFDCE2DC), // Darker contrast for closed receipts
+                color: const Color(
+                    0xFFDCE2DC), // Darker contrast for closed receipts
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withAlpha((0.2 * 255).toInt()),
                     spreadRadius: 2,
                     blurRadius: 6,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -178,12 +178,15 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  Expanded(child: buildReceiptList(closedReceipts)),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    child: buildReceiptList(closedReceipts),
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

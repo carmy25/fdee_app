@@ -50,121 +50,66 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Сума: $receiptTotal грн',
+              'Сума: $receiptTotal₴',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            ElevatedButton(
-              onPressed: () {
-                debugPrint('onPressed->toReceipt');
-                final router = ref.read(appRouterProvider);
-                router.pushNamed(ReceiptScreen.name);
-              },
-              style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 45),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Flexible(
+              child: ElevatedButton(
+                onPressed: () {
+                  debugPrint('onPressed->toReceipt');
+                  final router = ref.read(appRouterProvider);
+                  router.pushNamed(ReceiptScreen.name);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'До Чеку',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                child: const Text(
+                  'До Чеку',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: Container(
-      //   height: 50,
-      //   margin: const EdgeInsets.all(10),
-      //   child: ElevatedButton(
-      //     onPressed: () {},
-      //     child: const Center(
-      //       child: Text('Hellosss'),
-      //     ),
-      //   ),
-      // ),
-      // bottomNavigationBar: BottomAppBar(
-      //   color: Colors.amber,
-      //   child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //       children: <Widget>[
-      //         Row(children: [
-      //           FloatingActionButton.extended(
-      //             heroTag: UniqueKey(),
-      //             onPressed: () {},
-      //             label: Text('Зберегти'),
-      //             icon: Icon(Icons.save),
-      //           ),
-      //           SizedBox(
-      //             width: 12,
-      //           ),
-      //           FloatingActionButton.extended(
-      //             heroTag: UniqueKey(),
-      //             onPressed: () {},
-      //             label: Text('Відхилити'),
-      //             icon: Icon(Icons.cancel),
-      //           ),
-      //           DropdownButton<String>(
-      //             value: 'Оплата Готівкою',
-      //             icon: const Icon(Icons.arrow_downward),
-      //             elevation: 16,
-      //             style: const TextStyle(color: Colors.deepPurple),
-      //             underline: Container(
-      //               height: 2,
-      //               color: Colors.deepPurpleAccent,
-      //             ),
-      //             onChanged: (String? value) {
-      //               // This is called when the user selects an item.
-      //             },
-      //             items: [
-      //               DropdownMenuItem<String>(
-      //                 value: 'Оплата Готівкою',
-      //                 child: Text('Оплата Готівкою'),
-      //               ),
-      //               DropdownMenuItem<String>(
-      //                 value: 'Оплата Карткою',
-      //                 child: Text('Оплата Карткою'),
-      //               ),
-      //             ],
-      //           )
-      //         ])
-      //       ]),
-      // ),
-      body: Column(
-        children: [
-          const SizedBox(height: 15),
-          HeaderSection(
-            onPressed: () {},
-            title: 'Категорії',
-          ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              HeaderSection(
+                onPressed: () {},
+                title: 'Категорії',
+              ),
 
-          // categories section
-          SizedBox(
-            height: 115,
-            child: CategoriesWidget(),
-          ),
+              // categories section
+              SizedBox(
+                height: 115, // Fixed height for categories
+                child: CategoriesWidget(),
+              ),
 
-          const SizedBox(
-            height: 20,
-          ),
-          HeaderSection(
-            onPressed: () {},
-            title: 'Продукти',
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
+              const SizedBox(
+                height: 20,
+              ),
+              HeaderSection(
+                onPressed: () {},
+                title: 'Продукти',
+              ),
+              Padding(
                 padding: const EdgeInsets.all(4),
                 child: ProductsWidget(),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

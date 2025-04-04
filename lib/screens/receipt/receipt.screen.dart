@@ -110,7 +110,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -125,7 +125,6 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Placing "Сума: грн" above the buttons
             Text(
               'Сума: $receiptTotal грн',
               style: GoogleFonts.inter(
@@ -134,38 +133,50 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                 color: primaryTextColor,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ReceiptActionButtonWidget(
+            SizedBox(height: 8.h),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ReceiptActionButtonWidget(
                     onPressed: _goToReceipts,
                     backgroundColor: Colors.red,
                     text: 'На головну',
-                    icon: Icons.arrow_back),
-                ReceiptActionButtonWidget(
+                    icon: Icons.arrow_back,
+                  ),
+                  SizedBox(width: 8.w),
+                  ReceiptActionButtonWidget(
                     onPressed: () => _onSavePressed(activeReceipt!),
                     backgroundColor: Colors.blue,
                     text: 'Зберегти',
-                    icon: Icons.save),
-                ReceiptActionButtonWidget(
+                    icon: Icons.save,
+                  ),
+                  SizedBox(width: 8.w),
+                  ReceiptActionButtonWidget(
                     onPressed: () => _onPrintPressed(activeReceipt!),
                     backgroundColor: Colors.orange,
                     text: 'Друкувати',
-                    icon: Icons.print),
-                ReceiptActionButtonWidget(
+                    icon: Icons.print,
+                  ),
+                  SizedBox(width: 8.w),
+                  ReceiptActionButtonWidget(
                     onPressed: () => _onClosePressed(activeReceipt!),
                     backgroundColor: Colors.green,
                     text: 'Закрити',
-                    icon: Icons.check),
-              ],
+                    icon: Icons.check,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
       body: Column(
         children: [
-          Padding(
+          Container(
             padding: const EdgeInsets.all(8.0),
+            width: double.infinity,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

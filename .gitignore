@@ -1,6 +1,7 @@
 windows
 linux
 macos
+.cxx
 
 # Miscellaneous
 *.class

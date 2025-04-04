@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReceiptActionButtonWidget extends StatelessWidget {
   const ReceiptActionButtonWidget({
@@ -20,19 +21,20 @@ class ReceiptActionButtonWidget extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
-          padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 35),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 15.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        icon: Icon(icon, color: Colors.white, size: 30),
+        icon: Icon(icon, color: Colors.white, size: 24.sp),
         label: Text(
           text,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 14.sp,
             color: Colors.white,
           ),
+          overflow: TextOverflow.ellipsis,
         ));
   }
 }

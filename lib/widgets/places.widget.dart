@@ -19,7 +19,7 @@ class PlacesWidget extends ConsumerStatefulWidget {
 class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
   @override
   Widget build(BuildContext context) {
-    final placesState = ref.places.watchAll(syncLocal: true);
+    final placesState = ref.places.watchAll(syncLocal: true, remote: true);
     if (placesState.isLoading) {
       return const CircularProgressIndicator();
     }
