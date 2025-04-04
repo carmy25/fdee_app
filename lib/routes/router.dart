@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fudiee/screens/auth/auth.screen.dart';
 import 'package:fudiee/screens/cart/cart.screen.dart';
+import 'package:fudiee/screens/printer/printer.screen.dart';
 import 'package:fudiee/screens/receipt/receipt.screen.dart';
 import 'package:fudiee/screens/receipt/receipts.screen.dart';
 import 'package:fudiee/screens/splash/splash_screen.dart';
@@ -42,6 +43,13 @@ GoRouter appRouter(Ref ref) {
         name: ReceiptScreen.name,
         builder: (_, state) {
           return ReceiptScreen();
+        },
+      ),
+      GoRoute(
+        path: PrinterScreen.routePath,
+        name: PrinterScreen.name,
+        builder: (_, state) {
+          return PrinterScreen();
         },
       ),
     ],

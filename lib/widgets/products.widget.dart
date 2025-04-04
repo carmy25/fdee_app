@@ -38,7 +38,7 @@ class ProductsWidget extends ConsumerWidget {
         return ProgressIndicatorWidget();
       }
       debugPrint('activeCategory: $activeCategory');
-      final state = ref.categories.watchOne(activeCategory);
+      final state = ref.categories.watchOne(activeCategory, remote: true);
       if (state.isLoading) {
         return ProgressIndicatorWidget();
       }

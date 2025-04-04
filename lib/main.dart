@@ -53,7 +53,7 @@ class MyApp extends ConsumerWidget {
         ref.watch(initializeFlutterData(adapterProvidersMap));
     return repoInitializer.when(
         loading: () => const CircularProgressIndicator(),
-        error: (error, _) => Text(error.toString()),
+        error: (error, _) => MaterialApp(home: Text(error.toString())),
         data: (_) {
           return ScreenUtilInit(
             designSize: const Size(428, 926),

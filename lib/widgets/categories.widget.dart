@@ -18,7 +18,7 @@ class CategoriesWidget extends ConsumerStatefulWidget {
 class _CategoriesWidgetState extends ConsumerState<CategoriesWidget> {
   @override
   Widget build(BuildContext context) {
-    final state = ref.categories.watchAll(syncLocal: true);
+    final state = ref.categories.watchAll(syncLocal: true, remote: true);
     if (state.isLoading) {
       return ProgressIndicatorWidget();
     }

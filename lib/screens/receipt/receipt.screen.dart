@@ -1,3 +1,5 @@
+import 'package:fudiee/screens/printer/printer.screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,6 +36,22 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     await _onSave(receipt);
   }
 
+  Future<void> _requestBluetoothPermission() async {
+    if (await Permission.bluetoothConnect.request().isGranted) {
+      print("Bluetooth CONNECT permission granted");
+    } else {
+      print("Bluetooth CONNECT permission denied");
+    }
+  }
+
+  Future<void> _requestBluetoothScanPermission() async {
+    if (await Permission.bluetoothScan.request().isGranted) {
+      print("Bluetooth SCAN permission granted");
+    } else {
+      print("Bluetooth SCAN permission denied");
+    }
+  }
+
   Future<void> _onSave(Receipt receipt, {String status = 'OPEN'}) async {
     final placeId = placeController.value?.id;
     final placeName = placeController.value?.name;
@@ -62,6 +80,14 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   void _goToReceipts() {
     final router = ref.read(appRouterProvider);
     router.goNamed(ReceiptsScreen.name);
+  }
+
+  void _onPrintPressed(Receipt receipt) async {
+    debugPrint('onPressed->print_receipt');
+    final router = ref.read(appRouterProvider);
+    await _requestBluetoothPermission();
+    await _requestBluetoothScanPermission();
+    router.goNamed(PrinterScreen.name);
   }
 
   @override
@@ -121,6 +147,11 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                     backgroundColor: Colors.blue,
                     text: 'Зберегти',
                     icon: Icons.save),
+                ReceiptActionButtonWidget(
+                    onPressed: () => _onPrintPressed(activeReceipt!),
+                    backgroundColor: Colors.orange,
+                    text: 'Друкувати',
+                    icon: Icons.print),
                 ReceiptActionButtonWidget(
                     onPressed: () => _onClosePressed(activeReceipt!),
                     backgroundColor: Colors.green,
