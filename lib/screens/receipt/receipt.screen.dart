@@ -82,6 +82,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
   void _goToReceipts() {
     final router = ref.read(appRouterProvider);
+    ref.receipts.triggerNotify();
     router.goNamed(ReceiptsScreen.name);
   }
 
@@ -95,7 +96,6 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.invalidate(receiptsAdapterProvider);
     final activeReceipt = ref.watch(activeReceiptProvider);
     final receiptTotal = activeReceipt?.getTotal() ?? 0;
     paymentMethodController.value = activeReceipt?.paymentMethod ?? 'CASH';

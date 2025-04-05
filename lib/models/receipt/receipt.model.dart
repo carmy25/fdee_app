@@ -20,9 +20,6 @@ class Receipt extends DataModel<Receipt> {
   @override
   final int? id;
 
-  @override
-  List<Object?> get props => [createdAt];
-
   final int? place;
   final num? number;
   final String status;
