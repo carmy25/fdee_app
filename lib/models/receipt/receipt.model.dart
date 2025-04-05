@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_data/flutter_data.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fudiee/models/base/base.adapter.dart';
 import 'package:fudiee/models/product/product_item.model.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -21,9 +20,18 @@ class Receipt extends DataModel<Receipt> {
   @override
   final int? id;
 
+  @override
+  List<Object?> get props => [createdAt];
+
   final int? place;
   final num? number;
   final String status;
+
+  @JsonKey(
+    name: 'is_synced',
+    includeToJson: false,
+  )
+  final bool? isSynced;
 
   @JsonKey(
     name: 'created_at',
@@ -52,6 +60,7 @@ class Receipt extends DataModel<Receipt> {
     this.place,
     this.number,
     this.price = 0,
+    this.isSynced = false,
     required this.createdAt,
     required this.productItems,
     required this.paymentMethod,
@@ -129,7 +138,8 @@ class Receipt extends DataModel<Receipt> {
       paymentMethod: paymentMethod == const _Sentinel()
           ? this.paymentMethod
           : paymentMethod as String,
-      price: price == const _Sentinel() ? this.price : price as double,
+      price:
+          price == const _Sentinel() ? this.price : (price as num).toDouble(),
       placeName: placeName == const _Sentinel()
           ? this.placeName
           : placeName as String?,
@@ -146,6 +156,9 @@ class Receipt extends DataModel<Receipt> {
 
 mixin ReceiptAdapter<T extends DataModel<T>> on Adapter<T> {
   static String basePath = 'order';
+
+  @override
+  String urlForFindOne(id, Map<String, dynamic> params) => '$type/${id.id}';
 
   @override
   String get baseUrl => '${super.baseUrl}/$basePath/';

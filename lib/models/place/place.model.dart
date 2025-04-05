@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:flutter_data/flutter_data.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fudiee/models/base/base.adapter.dart';
 import 'package:json_annotation/json_annotation.dart';
 

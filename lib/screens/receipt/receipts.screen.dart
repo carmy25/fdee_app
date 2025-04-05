@@ -20,6 +20,57 @@ class ReceiptsScreen extends ConsumerStatefulWidget {
 }
 
 class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Use post-frame callback to ensure the widget is mounted
+    //WidgetsBinding.instance.addPostFrameCallback((_) {
+    //  _initializeData();
+    //});
+  }
+
+  // void _initializeData() {
+  //   if (!mounted) return;
+  //   try {
+  //     setState(() {
+  //       _receiptsFuture = _fetchReceipts();
+  //     });
+  //   } catch (e) {
+  //     debugPrint('Error initializing receipts: $e');
+  //   }
+  // }
+
+  Future<List<Receipt>> _fetchReceipts() async {
+    try {
+      return await ref.receipts.findAll(
+        remote: true,
+        syncLocal: true,
+      );
+    } catch (e) {
+      debugPrint('Error fetching receipts: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _handleRefresh() async {
+    try {
+      _fetchReceipts();
+    } catch (e) {
+      debugPrint('Error refreshing receipts: $e');
+    }
+  }
+
+  Map<String, List<Receipt>> _filterReceipts(List<Receipt> receipts) {
+    final openReceipts =
+        receipts.where((r) => r.status != 'CLOSED').toList().reversed.toList();
+    final closedReceipts =
+        receipts.where((r) => r.status == 'CLOSED').toList().reversed.toList();
+    return {
+      'open': openReceipts,
+      'closed': closedReceipts,
+    };
+  }
+
   _getPaymentMethodText(Receipt receipt) {
     final paymentMethod = receipt.paymentMethod;
     if (paymentMethod == 'CARD') {
@@ -62,31 +113,6 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.receipts.watchAll(syncLocal: true);
-
-    if (state.isLoading) {
-      return Scaffold(
-        backgroundColor: scaffoldBgColor,
-        appBar: AppBar(
-          backgroundColor: scaffoldBgColor,
-          automaticallyImplyLeading: false,
-          elevation: 2,
-          title: Center(
-            child: Text(
-              'Чеки',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-          ),
-        ),
-        body: ProgressIndicatorWidget(),
-      );
-    }
-
-    final openReceipts =
-        state.model.where((r) => r.status != 'CLOSED').toList();
-    final closedReceipts =
-        state.model.where((r) => r.status == 'CLOSED').toList();
-
     return Scaffold(
       backgroundColor: scaffoldBgColor,
       appBar: AppBar(
@@ -102,90 +128,115 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-          tooltip: 'Створити чек',
-          child: const Icon(Icons.add),
-          onPressed: () {
-            final router = ref.read(appRouterProvider);
-            final activeReceipt = ref.read(activeReceiptProvider.notifier);
-            debugPrint('add receipt');
-            final receipt = Receipt(
-              paymentMethod: 'CARD',
-              status: 'OPEN',
-              price: 0,
-              createdAt: DateTime.now(),
-              productItems: [],
+        tooltip: 'Створити чек',
+        child: const Icon(Icons.add),
+        onPressed: () {
+          final router = ref.read(appRouterProvider);
+          final activeReceipt = ref.read(activeReceiptProvider.notifier);
+          debugPrint('add receipt');
+          final receipt = Receipt(
+            paymentMethod: 'CARD',
+            status: 'OPEN',
+            price: 0,
+            createdAt: DateTime.now(),
+            productItems: [],
+          );
+          activeReceipt.setActive(receipt);
+          router.push(CartScreen.routePath);
+        },
+      ),
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: FutureBuilder<List<Receipt>>(
+          future: _fetchReceipts(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const ProgressIndicatorWidget();
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('Помилка: ${snapshot.error}'));
+            }
+
+            if (!snapshot.hasData) {
+              return const Center(child: Text('Немає даних'));
+            }
+
+            final receipts = _filterReceipts(snapshot.data!);
+
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE6EEF8),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withAlpha((0.2 * 255).toInt()),
+                          spreadRadius: 2,
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Активні',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.35,
+                          child: buildReceiptList(receipts['open']!),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(thickness: 1, color: Colors.grey[300]),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDCE2DC),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withAlpha((0.2 * 255).toInt()),
+                          spreadRadius: 2,
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Закриті',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.35,
+                          child: buildReceiptList(receipts['closed']!),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             );
-            activeReceipt.setActive(receipt);
-            router.push(CartScreen.routePath);
-          }),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE6EEF8), // Darker blue tint
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withAlpha((0.2 * 255).toInt()),
-                    spreadRadius: 2,
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'Активні',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.35,
-                    child: buildReceiptList(openReceipts),
-                  ),
-                ],
-              ),
-            ),
-            Divider(thickness: 1, color: Colors.grey[300]),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(
-                    0xFFDCE2DC), // Darker contrast for closed receipts
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withAlpha((0.2 * 255).toInt()),
-                    spreadRadius: 2,
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'Закриті',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.35,
-                    child: buildReceiptList(closedReceipts),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          },
         ),
       ),
     );

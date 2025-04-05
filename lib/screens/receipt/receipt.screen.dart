@@ -38,17 +38,17 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
   Future<void> _requestBluetoothPermission() async {
     if (await Permission.bluetoothConnect.request().isGranted) {
-      print("Bluetooth CONNECT permission granted");
+      debugPrint("Bluetooth CONNECT permission granted");
     } else {
-      print("Bluetooth CONNECT permission denied");
+      debugPrint("Bluetooth CONNECT permission denied");
     }
   }
 
   Future<void> _requestBluetoothScanPermission() async {
     if (await Permission.bluetoothScan.request().isGranted) {
-      print("Bluetooth SCAN permission granted");
+      debugPrint("Bluetooth SCAN permission granted");
     } else {
-      print("Bluetooth SCAN permission denied");
+      debugPrint("Bluetooth SCAN permission denied");
     }
   }
 
@@ -65,9 +65,12 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       placeName: placeName,
     );
     try {
-      await ref.receipts.save(updatedReceipt);
+      await ref.receipts.save(
+        updatedReceipt,
+      );
     } catch (e) {
       debugPrint('Error saving receipt: $e');
+      rethrow;
     }
     _goToReceipts();
   }
@@ -92,6 +95,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.invalidate(receiptsAdapterProvider);
     final activeReceipt = ref.watch(activeReceiptProvider);
     final receiptTotal = activeReceipt?.getTotal() ?? 0;
     paymentMethodController.value = activeReceipt?.paymentMethod ?? 'CASH';

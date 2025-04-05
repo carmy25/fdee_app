@@ -1,5 +1,4 @@
 import 'package:charset/charset.dart';
-import 'package:charset_converter/charset_converter.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +11,10 @@ class PrinterScreen extends StatefulWidget {
 
   const PrinterScreen({super.key});
   @override
-  _PrinterScreenState createState() => _PrinterScreenState();
+  PrinterScreenState createState() => PrinterScreenState();
 }
 
-class _PrinterScreenState extends State<PrinterScreen> {
+class PrinterScreenState extends State<PrinterScreen> {
   FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
   List<BluetoothDevice> devices = [];
   BluetoothConnection? connection;
@@ -35,12 +34,6 @@ class _PrinterScreenState extends State<PrinterScreen> {
     });
   }
 
-  _cp866() async {
-    final result = await CharsetConverter.encode(
-        "CP866", "Чек #123\n1x Кава - 50.00 UAH\nДякуємо за покупку!\n\n");
-    return result;
-  }
-
   /// Підключитися до вибраного принтера
   Future<void> _connect(BluetoothDevice device) async {
     try {
@@ -48,9 +41,9 @@ class _PrinterScreenState extends State<PrinterScreen> {
       setState(() {
         selectedDevice = device;
       });
-      print("✅ Підключено до ${device.name}");
+      debugPrint("✅ Підключено до ${device.name}");
     } catch (e) {
-      print("❌ Помилка підключення: $e");
+      debugPrint("❌ Помилка підключення: $e");
     }
   }
 
@@ -81,7 +74,7 @@ class _PrinterScreenState extends State<PrinterScreen> {
   /// Надрукувати чек
   Future<void> _printReceipt() async {
     if (connection == null) {
-      print("❌ Спочатку підключіться до принтера!");
+      debugPrint("❌ Спочатку підключіться до принтера!");
       return;
     }
 

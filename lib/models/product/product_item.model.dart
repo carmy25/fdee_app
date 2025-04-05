@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'dart:convert';
 
 import 'package:flutter_data/flutter_data.dart';
@@ -9,6 +7,7 @@ part 'product_item.model.g.dart';
 
 @JsonSerializable()
 @DataAdapter([])
+// ignore: must_be_immutable
 class ProductItem extends DataModel<ProductItem> {
   @override
   final int? id;
