@@ -3,12 +3,12 @@
 part of 'category.model.dart';
 
 // **************************************************************************
-// AdapterGenerator
+// RepositoryGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
-mixin _$CategoryAdapter on Adapter<Category> {
+mixin $CategoryLocalAdapter on LocalAdapter<Category> {
   static final Map<String, RelationshipMeta> _kCategoryRelationshipMetas = {
     'products': RelationshipMeta<Product>(
       name: 'products',
@@ -24,13 +24,13 @@ mixin _$CategoryAdapter on Adapter<Category> {
       _kCategoryRelationshipMetas;
 
   @override
-  Category deserializeLocal(map, {String? key}) {
+  Category deserialize(map) {
     map = transformDeserialize(map);
-    return internalWrapStopInit(() => _$CategoryFromJson(map), key: key);
+    return _$CategoryFromJson(map);
   }
 
   @override
-  Map<String, dynamic> serializeLocal(model, {bool withRelationships = true}) {
+  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
     final map = _$CategoryToJson(model);
     return transformSerialize(map, withRelationships: withRelationships);
   }
@@ -38,25 +38,30 @@ mixin _$CategoryAdapter on Adapter<Category> {
 
 final _categoriesFinders = <String, dynamic>{};
 
-class $CategoryAdapter = Adapter<Category>
-    with
-        _$CategoryAdapter,
-        JsonBaseAdapter<Category>,
-        CategoryAdapter<Category>;
+// ignore: must_be_immutable
+class $CategoryHiveLocalAdapter = HiveLocalAdapter<Category>
+    with $CategoryLocalAdapter;
 
-final categoriesAdapterProvider = Provider<Adapter<Category>>(
-    (ref) => $CategoryAdapter(ref, InternalHolder(_categoriesFinders)));
+class $CategoryRemoteAdapter = RemoteAdapter<Category>
+    with JsonBaseAdapter<Category>, CategoryAdapter<Category>;
 
-extension CategoryAdapterX on Adapter<Category> {
+final internalCategoriesRemoteAdapterProvider =
+    Provider<RemoteAdapter<Category>>((ref) => $CategoryRemoteAdapter(
+        $CategoryHiveLocalAdapter(ref), InternalHolder(_categoriesFinders)));
+
+final categoriesRepositoryProvider =
+    Provider<Repository<Category>>((ref) => Repository<Category>(ref));
+
+extension CategoryDataRepositoryX on Repository<Category> {
   JsonBaseAdapter<Category> get jsonBaseAdapter =>
-      this as JsonBaseAdapter<Category>;
+      remoteAdapter as JsonBaseAdapter<Category>;
   CategoryAdapter<Category> get categoryAdapter =>
-      this as CategoryAdapter<Category>;
+      remoteAdapter as CategoryAdapter<Category>;
 }
 
 extension CategoryRelationshipGraphNodeX on RelationshipGraphNode<Category> {
   RelationshipGraphNode<Product> get products {
-    final meta = _$CategoryAdapter._kCategoryRelationshipMetas['products']
+    final meta = $CategoryLocalAdapter._kCategoryRelationshipMetas['products']
         as RelationshipMeta<Product>;
     return meta.clone(
         parent: this is RelationshipMeta ? this as RelationshipMeta : null);

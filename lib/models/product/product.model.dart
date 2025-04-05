@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'product.model.g.dart';
 
 @JsonSerializable()
-@DataAdapter([JsonProductAdapter])
+@DataRepository([JsonProductAdapter])
 class Product extends DataModel<Product> {
   @override
   final int id;
@@ -40,7 +40,7 @@ class Product extends DataModel<Product> {
       required this.categoryObject});
 }
 
-mixin JsonProductAdapter<T extends DataModel<T>> on Adapter<T> {
+mixin JsonProductAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   @override
   String get baseUrl => '${const String.fromEnvironment(
         'BE_HOST',

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_data/flutter_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/themes/theme.dart';
-
-import 'package:flutter_data/flutter_data.dart';
 
 import 'package:fudiee/main.data.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,14 +25,15 @@ void main() async {
     },
     appRunner: () => runApp(ProviderScope(
       overrides: [
-        localStorageProvider.overrideWithValue(
-          LocalStorage(
-            baseDirFn: () async {
-              return (await getApplicationSupportDirectory()).path;
-            },
-            busyTimeout: 5000,
-            clear: LocalStorageClearStrategy.never,
-          ),
+        configureRepositoryLocalStorage(
+          baseDirFn: () =>
+              getApplicationDocumentsDirectory().then((dir) => dir.path),
+
+          encryptionKey: null,
+
+          // whether to clear all local storage during initialization
+
+          clear: LocalStorageClearStrategy.always,
         )
       ],
       child: SentryWidget(
@@ -49,8 +49,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final routerConfig = ref.watch(appRouterProvider);
-    final repoInitializer =
-        ref.watch(initializeFlutterData(adapterProvidersMap));
+    final repoInitializer = ref.watch(repositoryInitializerProvider);
     return repoInitializer.when(
         loading: () => const CircularProgressIndicator(),
         error: (error, _) => MaterialApp(home: Text(error.toString())),

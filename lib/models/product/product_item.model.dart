@@ -6,8 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'product_item.model.g.dart';
 
 @JsonSerializable()
-@DataAdapter([])
-// ignore: must_be_immutable
+@DataRepository([])
 class ProductItem extends DataModel<ProductItem> {
   @override
   final int? id;

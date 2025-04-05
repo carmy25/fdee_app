@@ -3,12 +3,12 @@
 part of 'receipt.model.dart';
 
 // **************************************************************************
-// AdapterGenerator
+// RepositoryGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
-mixin _$ReceiptAdapter on Adapter<Receipt> {
+mixin $ReceiptLocalAdapter on LocalAdapter<Receipt> {
   static final Map<String, RelationshipMeta> _kReceiptRelationshipMetas = {};
 
   @override
@@ -16,13 +16,13 @@ mixin _$ReceiptAdapter on Adapter<Receipt> {
       _kReceiptRelationshipMetas;
 
   @override
-  Receipt deserializeLocal(map, {String? key}) {
+  Receipt deserialize(map) {
     map = transformDeserialize(map);
-    return internalWrapStopInit(() => _$ReceiptFromJson(map), key: key);
+    return _$ReceiptFromJson(map);
   }
 
   @override
-  Map<String, dynamic> serializeLocal(model, {bool withRelationships = true}) {
+  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
     final map = model.toJson();
     return transformSerialize(map, withRelationships: withRelationships);
   }
@@ -30,16 +30,25 @@ mixin _$ReceiptAdapter on Adapter<Receipt> {
 
 final _receiptsFinders = <String, dynamic>{};
 
-class $ReceiptAdapter = Adapter<Receipt>
-    with _$ReceiptAdapter, JsonBaseAdapter<Receipt>, ReceiptAdapter<Receipt>;
+// ignore: must_be_immutable
+class $ReceiptHiveLocalAdapter = HiveLocalAdapter<Receipt>
+    with $ReceiptLocalAdapter;
 
-final receiptsAdapterProvider = Provider<Adapter<Receipt>>(
-    (ref) => $ReceiptAdapter(ref, InternalHolder(_receiptsFinders)));
+class $ReceiptRemoteAdapter = RemoteAdapter<Receipt>
+    with JsonBaseAdapter<Receipt>, ReceiptAdapter<Receipt>;
 
-extension ReceiptAdapterX on Adapter<Receipt> {
+final internalReceiptsRemoteAdapterProvider = Provider<RemoteAdapter<Receipt>>(
+    (ref) => $ReceiptRemoteAdapter(
+        $ReceiptHiveLocalAdapter(ref), InternalHolder(_receiptsFinders)));
+
+final receiptsRepositoryProvider =
+    Provider<Repository<Receipt>>((ref) => Repository<Receipt>(ref));
+
+extension ReceiptDataRepositoryX on Repository<Receipt> {
   JsonBaseAdapter<Receipt> get jsonBaseAdapter =>
-      this as JsonBaseAdapter<Receipt>;
-  ReceiptAdapter<Receipt> get receiptAdapter => this as ReceiptAdapter<Receipt>;
+      remoteAdapter as JsonBaseAdapter<Receipt>;
+  ReceiptAdapter<Receipt> get receiptAdapter =>
+      remoteAdapter as ReceiptAdapter<Receipt>;
 }
 
 extension ReceiptRelationshipGraphNodeX on RelationshipGraphNode<Receipt> {}

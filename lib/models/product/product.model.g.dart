@@ -3,12 +3,12 @@
 part of 'product.model.dart';
 
 // **************************************************************************
-// AdapterGenerator
+// RepositoryGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
-mixin _$ProductAdapter on Adapter<Product> {
+mixin $ProductLocalAdapter on LocalAdapter<Product> {
   static final Map<String, RelationshipMeta> _kProductRelationshipMetas = {
     'categoryObject': RelationshipMeta<Category>(
       name: 'categoryObject',
@@ -24,13 +24,13 @@ mixin _$ProductAdapter on Adapter<Product> {
       _kProductRelationshipMetas;
 
   @override
-  Product deserializeLocal(map, {String? key}) {
+  Product deserialize(map) {
     map = transformDeserialize(map);
-    return internalWrapStopInit(() => _$ProductFromJson(map), key: key);
+    return _$ProductFromJson(map);
   }
 
   @override
-  Map<String, dynamic> serializeLocal(model, {bool withRelationships = true}) {
+  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
     final map = _$ProductToJson(model);
     return transformSerialize(map, withRelationships: withRelationships);
   }
@@ -38,21 +38,30 @@ mixin _$ProductAdapter on Adapter<Product> {
 
 final _productsFinders = <String, dynamic>{};
 
-class $ProductAdapter = Adapter<Product>
-    with _$ProductAdapter, JsonProductAdapter<Product>;
+// ignore: must_be_immutable
+class $ProductHiveLocalAdapter = HiveLocalAdapter<Product>
+    with $ProductLocalAdapter;
 
-final productsAdapterProvider = Provider<Adapter<Product>>(
-    (ref) => $ProductAdapter(ref, InternalHolder(_productsFinders)));
+class $ProductRemoteAdapter = RemoteAdapter<Product>
+    with JsonProductAdapter<Product>;
 
-extension ProductAdapterX on Adapter<Product> {
+final internalProductsRemoteAdapterProvider = Provider<RemoteAdapter<Product>>(
+    (ref) => $ProductRemoteAdapter(
+        $ProductHiveLocalAdapter(ref), InternalHolder(_productsFinders)));
+
+final productsRepositoryProvider =
+    Provider<Repository<Product>>((ref) => Repository<Product>(ref));
+
+extension ProductDataRepositoryX on Repository<Product> {
   JsonProductAdapter<Product> get jsonProductAdapter =>
-      this as JsonProductAdapter<Product>;
+      remoteAdapter as JsonProductAdapter<Product>;
 }
 
 extension ProductRelationshipGraphNodeX on RelationshipGraphNode<Product> {
   RelationshipGraphNode<Category> get categoryObject {
-    final meta = _$ProductAdapter._kProductRelationshipMetas['categoryObject']
-        as RelationshipMeta<Category>;
+    final meta =
+        $ProductLocalAdapter._kProductRelationshipMetas['categoryObject']
+            as RelationshipMeta<Category>;
     return meta.clone(
         parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }

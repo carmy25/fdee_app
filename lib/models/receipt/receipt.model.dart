@@ -15,13 +15,10 @@ class _Sentinel {
 }
 
 @JsonSerializable()
-@DataAdapter([JsonBaseAdapter, ReceiptAdapter])
+@DataRepository([JsonBaseAdapter, ReceiptAdapter])
 class Receipt extends DataModel<Receipt> {
   @override
   final int? id;
-
-  @override
-  List<Object?> get props => [createdAt];
 
   final int? place;
   final num? number;
@@ -154,7 +151,7 @@ class Receipt extends DataModel<Receipt> {
   }
 }
 
-mixin ReceiptAdapter<T extends DataModel<T>> on Adapter<T> {
+mixin ReceiptAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   static String basePath = 'order';
 
   @override

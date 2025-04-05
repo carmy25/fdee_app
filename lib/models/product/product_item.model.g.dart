@@ -3,12 +3,12 @@
 part of 'product_item.model.dart';
 
 // **************************************************************************
-// AdapterGenerator
+// RepositoryGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
-mixin _$ProductItemAdapter on Adapter<ProductItem> {
+mixin $ProductItemLocalAdapter on LocalAdapter<ProductItem> {
   static final Map<String, RelationshipMeta> _kProductItemRelationshipMetas =
       {};
 
@@ -17,13 +17,13 @@ mixin _$ProductItemAdapter on Adapter<ProductItem> {
       _kProductItemRelationshipMetas;
 
   @override
-  ProductItem deserializeLocal(map, {String? key}) {
+  ProductItem deserialize(map) {
     map = transformDeserialize(map);
-    return internalWrapStopInit(() => _$ProductItemFromJson(map), key: key);
+    return _$ProductItemFromJson(map);
   }
 
   @override
-  Map<String, dynamic> serializeLocal(model, {bool withRelationships = true}) {
+  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
     final map = model.toJson();
     return transformSerialize(map, withRelationships: withRelationships);
   }
@@ -31,13 +31,21 @@ mixin _$ProductItemAdapter on Adapter<ProductItem> {
 
 final _productItemsFinders = <String, dynamic>{};
 
-class $ProductItemAdapter = Adapter<ProductItem>
-    with _$ProductItemAdapter, NothingMixin;
+// ignore: must_be_immutable
+class $ProductItemHiveLocalAdapter = HiveLocalAdapter<ProductItem>
+    with $ProductItemLocalAdapter;
 
-final productItemsAdapterProvider = Provider<Adapter<ProductItem>>(
-    (ref) => $ProductItemAdapter(ref, InternalHolder(_productItemsFinders)));
+class $ProductItemRemoteAdapter = RemoteAdapter<ProductItem> with NothingMixin;
 
-extension ProductItemAdapterX on Adapter<ProductItem> {}
+final internalProductItemsRemoteAdapterProvider =
+    Provider<RemoteAdapter<ProductItem>>((ref) => $ProductItemRemoteAdapter(
+        $ProductItemHiveLocalAdapter(ref),
+        InternalHolder(_productItemsFinders)));
+
+final productItemsRepositoryProvider =
+    Provider<Repository<ProductItem>>((ref) => Repository<ProductItem>(ref));
+
+extension ProductItemDataRepositoryX on Repository<ProductItem> {}
 
 extension ProductItemRelationshipGraphNodeX
     on RelationshipGraphNode<ProductItem> {}

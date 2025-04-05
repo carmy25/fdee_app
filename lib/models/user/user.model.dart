@@ -8,7 +8,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'user.model.g.dart';
 
 @JsonSerializable()
-@DataAdapter([JsonUserAdapter])
+@DataRepository([JsonUserAdapter])
 class User extends DataModel<User> {
   @override
   final int? id;
@@ -20,7 +20,7 @@ class User extends DataModel<User> {
   });
 }
 
-mixin JsonUserAdapter<T extends DataModel<T>> on Adapter<T> {
+mixin JsonUserAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   @override
   String get baseUrl => '${const String.fromEnvironment(
         "BE_HOST",

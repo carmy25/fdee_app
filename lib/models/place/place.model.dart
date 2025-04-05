@@ -9,7 +9,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'place.model.g.dart';
 
 @JsonSerializable()
-@DataAdapter([JsonBaseAdapter, PlaceAdapter])
+@DataRepository([JsonBaseAdapter, PlaceAdapter])
 class Place extends DataModel<Place> {
   @override
   final int? id;
@@ -32,7 +32,7 @@ class Place extends DataModel<Place> {
   }
 }
 
-mixin PlaceAdapter<T extends DataModel<T>> on Adapter<T> {
+mixin PlaceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   static String basePath = 'place';
   @override
   String get baseUrl => '${super.baseUrl}/$basePath/';

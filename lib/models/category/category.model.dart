@@ -8,8 +8,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'category.model.g.dart';
 
 @JsonSerializable()
-@DataAdapter([JsonBaseAdapter, CategoryAdapter])
-// ignore: must_be_immutable
+@DataRepository([JsonBaseAdapter, CategoryAdapter])
 class Category extends DataModel<Category> {
   @override
   final int? id;
@@ -51,7 +50,7 @@ class Category extends DataModel<Category> {
   int get hashCode => Object.hash(id, name, image, parent);
 }
 
-mixin CategoryAdapter<T extends DataModel<T>> on Adapter<T> {
+mixin CategoryAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   static String basePath = 'order';
   @override
   String get baseUrl => '${super.baseUrl}/$basePath/';
