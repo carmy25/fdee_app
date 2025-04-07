@@ -1,4 +1,6 @@
+import 'package:fudiee/models/printer/printer.model.dart';
 import 'package:fudiee/screens/printer/printer.screen.dart';
+import 'package:fudiee/widgets/progress_indicator.widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +32,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   final PlaceController placeController = PlaceController();
   final PaymentMethodController paymentMethodController =
       PaymentMethodController();
+  bool _isPrinting = false;
 
   void _onSavePressed(Receipt receipt) async {
     debugPrint('onPressed->save_receipt');
@@ -57,6 +60,16 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     final placeName = placeController.value?.name;
     final price = receipt.getTotal();
 
+    if (receipt.productItems.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Додайте хоча б один товар'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     final updatedReceipt = receipt.copyWith(
       paymentMethod: paymentMethodController.value,
       status: status,
@@ -65,14 +78,19 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       placeName: placeName,
     );
     try {
-      await ref.receipts.save(
-        updatedReceipt,
-      );
+      await ref.receipts.save(updatedReceipt);
+      _goToReceipts();
     } catch (e) {
       debugPrint('Error saving receipt: $e');
-      rethrow;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Помилка збереження чека: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
-    _goToReceipts();
   }
 
   void _onClosePressed(Receipt receipt) {
@@ -87,11 +105,69 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   void _onPrintPressed(Receipt receipt) async {
-    debugPrint('onPressed->print_receipt');
+    if (_isPrinting) return;
+
     final router = ref.read(appRouterProvider);
-    await _requestBluetoothPermission();
-    await _requestBluetoothScanPermission();
-    router.goNamed(PrinterScreen.name);
+    setState(() => _isPrinting = true);
+
+    BuildContext dialogContext = context;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        dialogContext = context;
+        return const ProgressIndicatorWidget();
+      },
+    );
+
+    try {
+      await _requestBluetoothPermission();
+      await _requestBluetoothScanPermission();
+      final printerAddress = await ref.read(printerProvider.future);
+
+      if (printerAddress.isNotEmpty) {
+        debugPrint('Printer address: $printerAddress');
+        final printer = ref.read(printerProvider.notifier);
+        await printer.connect(printerAddress);
+        await printer.print(receipt);
+        try {
+          await printer.disconnect();
+        } catch (e) {
+          debugPrint('Error disconnecting printer: $e');
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Друк завершено'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+        debugPrint('Receipt printed successfully');
+      } else {
+        debugPrint('No printer address found');
+        if (mounted) {
+          Navigator.of(dialogContext).pop(); // Pop dialog before navigation
+          router.push(PrinterScreen.routePath);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error printing receipt: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Помилка друку: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isPrinting = false);
+        Navigator.of(dialogContext).pop();
+      }
+    }
   }
 
   @override
@@ -138,40 +214,44 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               ),
             ),
             SizedBox(height: 8.h),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ReceiptActionButtonWidget(
+            Row(
+              children: [
+                Expanded(
+                  child: ReceiptActionButtonWidget(
                     onPressed: _goToReceipts,
                     backgroundColor: Colors.red,
                     text: 'На головну',
                     icon: Icons.arrow_back,
                   ),
-                  SizedBox(width: 8.w),
-                  ReceiptActionButtonWidget(
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: ReceiptActionButtonWidget(
                     onPressed: () => _onSavePressed(activeReceipt!),
                     backgroundColor: Colors.blue,
                     text: 'Зберегти',
                     icon: Icons.save,
                   ),
-                  SizedBox(width: 8.w),
-                  ReceiptActionButtonWidget(
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: ReceiptActionButtonWidget(
                     onPressed: () => _onPrintPressed(activeReceipt!),
                     backgroundColor: Colors.orange,
                     text: 'Друкувати',
                     icon: Icons.print,
                   ),
-                  SizedBox(width: 8.w),
-                  ReceiptActionButtonWidget(
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: ReceiptActionButtonWidget(
                     onPressed: () => _onClosePressed(activeReceipt!),
                     backgroundColor: Colors.green,
                     text: 'Закрити',
                     icon: Icons.check,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),

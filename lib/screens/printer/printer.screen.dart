@@ -1,11 +1,9 @@
-import 'package:charset/charset.dart';
-
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fudiee/models/printer/printer.model.dart';
 
-class PrinterScreen extends StatefulWidget {
+class PrinterScreen extends ConsumerStatefulWidget {
   static final name = 'PrinterScreen';
   static final routePath = '/printer';
 
@@ -14,7 +12,7 @@ class PrinterScreen extends StatefulWidget {
   PrinterScreenState createState() => PrinterScreenState();
 }
 
-class PrinterScreenState extends State<PrinterScreen> {
+class PrinterScreenState extends ConsumerState<PrinterScreen> {
   FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
   List<BluetoothDevice> devices = [];
   BluetoothConnection? connection;
@@ -41,52 +39,24 @@ class PrinterScreenState extends State<PrinterScreen> {
       setState(() {
         selectedDevice = device;
       });
-      debugPrint("✅ Підключено до ${device.name}");
+      final printer = ref.read(printerProvider.notifier);
+      await printer.setAddress(device.address);
+      debugPrint("✅ Stored ${device.name} printer");
     } catch (e) {
-      debugPrint("❌ Помилка підключення: $e");
+      debugPrint("❌ Issue with storing printer address: $e");
     }
-  }
-
-  /// Створити чек
-  Future<List<int>> _createReceipt() async {
-    final profile = await CapabilityProfile.load();
-    final generator = Generator(PaperSize.mm58, profile, codec: cp866);
-    List<int> bytes = [];
-
-    bytes.addAll([0x1B, 0x74, 0x11]);
-    bytes += generator.text('===== Чек =====',
-        styles: PosStyles(
-            align: PosAlign.center,
-            height: PosTextSize.size2,
-            width: PosTextSize.size2,
-            bold: true));
-    bytes += generator.text(DateTime.now().toString());
-    bytes += generator.hr();
-    bytes += generator.text('1x Кава - 50.00 UAH');
-    bytes += generator.text('Total: 75.00 UAH',
-        styles: PosStyles(align: PosAlign.right, bold: true));
-    bytes += generator.feed(2);
-    bytes += generator.cut();
-
-    return bytes;
-  }
-
-  /// Надрукувати чек
-  Future<void> _printReceipt() async {
-    if (connection == null) {
-      debugPrint("❌ Спочатку підключіться до принтера!");
-      return;
-    }
-
-    final ticket = await _createReceipt();
-    connection!.output.add(Uint8List.fromList(ticket));
-    await connection!.output.allSent;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Bluetooth Принтери")),
+      appBar: AppBar(
+        title: Text("Bluetooth Принтери"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: Column(
         children: [
           ElevatedButton(
@@ -101,16 +71,13 @@ class PrinterScreenState extends State<PrinterScreen> {
                   trailing: selectedDevice == devices[index]
                       ? Icon(Icons.check, color: Colors.green)
                       : null,
-                  onTap: () => _connect(devices[index]),
+                  onTap: () async {
+                    await _connect(devices[index]);
+                  },
                 );
               },
             ),
           ),
-          if (selectedDevice != null)
-            ElevatedButton(
-              onPressed: _printReceipt,
-              child: Text("🖨️ Друк чека"),
-            ),
         ],
       ),
     );

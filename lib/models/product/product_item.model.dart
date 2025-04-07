@@ -32,6 +32,10 @@ class ProductItem extends DataModel<ProductItem> {
     }
   }
 
+  num getTotal() {
+    return price * amount;
+  }
+
   ProductItem(
       {this.id,
       required this.name,
