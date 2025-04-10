@@ -26,24 +26,29 @@ class ActiveReceipt extends _$ActiveReceipt {
     if (receipt == null) {
       return;
     }
+    debugPrint('updateProduct: ${product.id}: ${product.name}');
     final newReceipt = receipt.copyWith(productItems: []);
-    final items = receipt.productItems.toList();
+    final items = receipt.productItems.where((item) => item.amount > 0);
     var alreadyAdded = false;
     for (final item in items) {
       if (item.productId != product.id) {
         newReceipt.productItems.add(item);
         continue;
       }
-      newReceipt.productItems.add(
-        ProductItem(
-          name: item.name,
-          amount: callback(item),
-          price: product.price,
-          image: product.image,
-          productId: item.productId,
-          receiptId: newReceipt.id,
-        ),
-      );
+      final amount = callback(item);
+      if (amount > 0) {
+        newReceipt.productItems.add(
+          ProductItem(
+            name: item.name,
+            amount: amount,
+            rootCategory: product.rootCategory,
+            price: product.price,
+            image: product.image,
+            productId: item.productId,
+            receiptId: newReceipt.id,
+          ),
+        );
+      }
       alreadyAdded = true;
     }
     if (alreadyAdded) {
@@ -53,6 +58,7 @@ class ActiveReceipt extends _$ActiveReceipt {
     newReceipt.productItems.add(
       ProductItem(
         name: product.name,
+        rootCategory: product.rootCategory,
         amount: 1,
         price: product.price,
         image: product.image,

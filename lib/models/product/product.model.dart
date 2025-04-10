@@ -21,6 +21,11 @@ class Product extends DataModel<Product> {
   final String name;
   final num price;
   final String category;
+  @JsonKey(
+    name: 'root_category',
+    fromJson: _nameFromJson,
+  )
+  final String rootCategory;
   final String? image;
   final BelongsTo<Category>? categoryObject;
   static String _nameFromJson(String? value) {
@@ -36,6 +41,7 @@ class Product extends DataModel<Product> {
       required this.name,
       required this.price,
       required this.category,
+      required this.rootCategory,
       required this.image,
       required this.categoryObject});
 }

@@ -20,25 +20,33 @@ class ReceiptsScreen extends ConsumerStatefulWidget {
 }
 
 class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
+  late FocusNode _focusNode;
+
   @override
   void initState() {
     super.initState();
-    // Use post-frame callback to ensure the widget is mounted
-    //WidgetsBinding.instance.addPostFrameCallback((_) {
-    //  _initializeData();
-    //});
+    _focusNode = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeData();
+    });
   }
 
-  // void _initializeData() {
-  //   if (!mounted) return;
-  //   try {
-  //     setState(() {
-  //       _receiptsFuture = _fetchReceipts();
-  //     });
-  //   } catch (e) {
-  //     debugPrint('Error initializing receipts: $e');
-  //   }
-  // }
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _handleRefresh();
+  }
+
+  void _initializeData() {
+    if (!mounted) return;
+    _handleRefresh();
+  }
 
   Future<List<Receipt>> _fetchReceipts() async {
     try {
@@ -54,17 +62,29 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
 
   Future<void> _handleRefresh() async {
     try {
-      _fetchReceipts();
+      await _fetchReceipts();
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
       debugPrint('Error refreshing receipts: $e');
     }
   }
 
   Map<String, List<Receipt>> _filterReceipts(List<Receipt> receipts) {
+    final receiptsFixed = <Receipt>[];
+    final alreadyAdded = <int?>{};
+    receipts.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    for (final receipt in receipts.reversed) {
+      if (!alreadyAdded.contains(receipt.id)) {
+        alreadyAdded.add(receipt.id);
+        receiptsFixed.add(receipt);
+      }
+    }
     final openReceipts =
-        receipts.where((r) => r.status != 'CLOSED').toList().reversed.toList();
+        receiptsFixed.where((r) => r.status != 'CLOSED').toList().toList();
     final closedReceipts =
-        receipts.where((r) => r.status == 'CLOSED').toList().reversed.toList();
+        receiptsFixed.where((r) => r.status == 'CLOSED').toList().toList();
     return {
       'open': openReceipts,
       'closed': closedReceipts,
@@ -113,58 +133,56 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: scaffoldBgColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
+    final state = ref.receipts.watchAll(
+      syncLocal: true,
+      remote: true,
+    );
+    if (state.isLoading) {
+      return const ProgressIndicatorWidget();
+    }
+    final receipts = _filterReceipts(state.model);
+    return Focus(
+      focusNode: _focusNode,
+      onFocusChange: (hasFocus) {
+        if (hasFocus) {
+          _handleRefresh();
+        }
+      },
+      child: Scaffold(
         backgroundColor: scaffoldBgColor,
-        elevation: 2,
-        title: Center(
-          child: Text(
-            'Чеки',
-            style: Theme.of(context).textTheme.headlineSmall,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: scaffoldBgColor,
+          elevation: 2,
+          title: Center(
+            child: Text(
+              'Чеки',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
           ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Створити чек',
-        child: const Icon(Icons.add),
-        onPressed: () {
-          final router = ref.read(appRouterProvider);
-          final activeReceipt = ref.read(activeReceiptProvider.notifier);
-          debugPrint('add receipt');
-          final receipt = Receipt(
-            paymentMethod: 'CARD',
-            status: 'OPEN',
-            price: 0,
-            createdAt: DateTime.now(),
-            productItems: [],
-          );
-          activeReceipt.setActive(receipt);
-          router.push(CartScreen.routePath);
-        },
-      ),
-      body: RefreshIndicator(
-        onRefresh: _handleRefresh,
-        child: FutureBuilder<List<Receipt>>(
-          future: _fetchReceipts(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const ProgressIndicatorWidget();
-            }
-
-            if (snapshot.hasError) {
-              return Center(child: Text('Помилка: ${snapshot.error}'));
-            }
-
-            if (!snapshot.hasData) {
-              return const Center(child: Text('Немає даних'));
-            }
-
-            final receipts = _filterReceipts(snapshot.data!);
-
-            return SingleChildScrollView(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'Створити чек',
+          child: const Icon(Icons.add),
+          onPressed: () {
+            final router = ref.read(appRouterProvider);
+            final activeReceipt = ref.read(activeReceiptProvider.notifier);
+            debugPrint('add receipt');
+            final receipt = Receipt(
+              paymentMethod: 'CARD',
+              status: 'OPEN',
+              price: 0,
+              createdAt: DateTime.now(),
+              productItems: [],
+            );
+            activeReceipt.setActive(receipt);
+            router.push(CartScreen.routePath);
+          },
+        ),
+        body: RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
@@ -235,9 +253,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
                   ),
                 ],
               ),
-            );
-          },
-        ),
+            )),
       ),
     );
   }

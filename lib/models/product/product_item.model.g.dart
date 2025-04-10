@@ -61,6 +61,7 @@ ProductItem _$ProductItemFromJson(Map<String, dynamic> json) => ProductItem(
       price: json['price'] as num,
       image: json['image'] as String?,
       productId: (json['product_type'] as num).toInt(),
+      rootCategory: ProductItem._nameFromJson(json['root_category'] as String?),
       receiptId: (json['receiptId'] as num?)?.toInt(),
     );
 
@@ -71,6 +72,7 @@ Map<String, dynamic> _$ProductItemToJson(ProductItem instance) =>
       'amount': instance.amount,
       'name': instance.name,
       'image': instance.image,
+      'root_category': instance.rootCategory,
       'product_type': instance.productId,
       'receiptId': instance.receiptId,
     };
