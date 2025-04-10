@@ -19,6 +19,11 @@ class ProductItem extends DataModel<ProductItem> {
   final String name;
   final String? image;
   @JsonKey(
+    name: 'root_category',
+    fromJson: _nameFromJson,
+  )
+  final String rootCategory;
+  @JsonKey(
     name: 'product_type',
   )
   final int productId;
@@ -43,6 +48,7 @@ class ProductItem extends DataModel<ProductItem> {
       required this.price,
       required this.image,
       required this.productId,
+      required this.rootCategory,
       this.receiptId});
 
   Map<String, dynamic> toJson() => _$ProductItemToJson(this);

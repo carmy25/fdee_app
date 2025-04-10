@@ -26,6 +26,7 @@ class ProductsWidget extends ConsumerWidget {
         products.add(Product(
             categoryObject: BelongsTo(null),
             id: prodItem.productId,
+            rootCategory: prodItem.rootCategory,
             name: prodItem.name,
             price: prodItem.price,
             category: '',

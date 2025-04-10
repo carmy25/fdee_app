@@ -41,6 +41,7 @@ class ActiveReceipt extends _$ActiveReceipt {
           ProductItem(
             name: item.name,
             amount: amount,
+            rootCategory: product.rootCategory,
             price: product.price,
             image: product.image,
             productId: item.productId,
@@ -57,6 +58,7 @@ class ActiveReceipt extends _$ActiveReceipt {
     newReceipt.productItems.add(
       ProductItem(
         name: product.name,
+        rootCategory: product.rootCategory,
         amount: 1,
         price: product.price,
         image: product.image,

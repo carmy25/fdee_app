@@ -99,6 +99,7 @@ class Receipt extends DataModel<Receipt> {
       return ProductItem(
         id: (e['id'] as num?)?.toInt(),
         name: _nameFromJson(e['name'] as String),
+        rootCategory: e['root_category'] as String,
         amount: (e['amount'] as num).toInt(),
         price: e['price'] as num,
         image: e['image'] as String?,

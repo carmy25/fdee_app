@@ -28,24 +28,20 @@ class Printer extends _$Printer {
     state = AsyncData(address);
   }
 
-  Future<BluetoothConnection?> connect(String address) async {
-    try {
-      _connection = await BluetoothConnection.toAddress(address);
-      debugPrint("✅ Підключено до $address");
-      return _connection;
-    } catch (e) {
-      debugPrint("❌ Помилка підключення: $e");
-    }
-    return null;
+  Future<BluetoothConnection> connect(String address) async {
+    final conn = await BluetoothConnection.toAddress(address);
+    _connection = conn;
+    debugPrint("✅ Підключено до $address");
+    return conn;
   }
 
   Future<void> disconnect() async {
     try {
       final connection = _connection;
       if (connection != null) {
-        // await Future.delayed(const Duration(seconds: 5));
+        await Future.delayed(const Duration(seconds: 4));
         // await connection.close();
-        _connection = null;
+        // _connection = null;
       }
     } catch (e) {
       debugPrint("❌ Помилка відключення: $e");

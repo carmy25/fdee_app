@@ -1,4 +1,5 @@
 import 'package:fudiee/models/printer/printer.model.dart';
+import 'package:fudiee/models/product/product_item.model.dart';
 import 'package:fudiee/screens/printer/printer.screen.dart';
 import 'package:fudiee/widgets/progress_indicator.widget.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -55,6 +56,11 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     }
   }
 
+  Future<void> _requestPermissions() async {
+    await _requestBluetoothPermission();
+    await _requestBluetoothScanPermission();
+  }
+
   Future<void> _onSave(Receipt receipt, {String status = 'OPEN'}) async {
     final placeId = placeController.value?.id;
     final placeName = placeController.value?.name;
@@ -104,69 +110,205 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     router.goNamed(ReceiptsScreen.name);
   }
 
-  void _onPrintPressed(Receipt receipt) async {
-    if (_isPrinting) return;
+  _handlePrintReceiptSplited(Printer printer, Receipt receipt) async {
+    // Group product items by root category
+    final groupedItems =
+        receipt.productItems.groupBy((ProductItem item) => item.rootCategory);
 
-    final router = ref.read(appRouterProvider);
-    setState(() => _isPrinting = true);
+    final categoriesCount = groupedItems.keys.length;
+    if (categoriesCount < 2) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext dialogContext) {
+          return const ProgressIndicatorWidget();
+        },
+      );
+      await printer.print(receipt);
+      _checkMountedAndPopDialog();
+      return;
+    }
 
-    BuildContext dialogContext = context;
+    // Print first category automatically
+    final categories = groupedItems.keys.toList();
+    final firstCategory = categories[0];
+    final firstItems = groupedItems[firstCategory]!;
+    final firstSplittedReceipt = receipt.copyWith(productItems: firstItems);
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
-        dialogContext = context;
+      builder: (BuildContext dialogContext) {
+        return const ProgressIndicatorWidget();
+      },
+    );
+    await printer.print(firstSplittedReceipt);
+    _checkMountedAndPopDialog();
+
+    // Track printed categories
+    final printedCategories = <String>{firstCategory};
+    int currentIndex = 1;
+
+    // Show dialog for remaining categories
+    while (currentIndex < categories.length) {
+      if (!mounted) return;
+      final result = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Друк чеків'),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: categories.map((category) {
+                  return ListTile(
+                    leading: Icon(
+                      printedCategories.contains(category)
+                          ? Icons.check_circle
+                          : Icons.circle_outlined,
+                      color: printedCategories.contains(category)
+                          ? Colors.green
+                          : Colors.grey,
+                    ),
+                    title: Text(category),
+                  );
+                }).toList(),
+              ),
+            ),
+            actions: [
+              TextButton.icon(
+                icon: const Icon(Icons.cancel),
+                label: const Text('Відміна'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              TextButton.icon(
+                icon: const Icon(Icons.print),
+                label: const Text('Продовжити'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      if (result != true) break;
+
+      final currentCategory = categories[currentIndex];
+      final items = groupedItems[currentCategory]!;
+      final splittedReceipt = receipt.copyWith(productItems: items);
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext dialogContext) {
+          return const ProgressIndicatorWidget();
+        },
+      );
+      await printer.print(splittedReceipt);
+
+      printedCategories.add(currentCategory);
+      currentIndex++;
+    }
+  }
+
+  void _checkMountedAndPopDialog() {
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _handlePrinting(String printerAddress, Receipt receipt) async {
+    debugPrint('Printer address: $printerAddress');
+
+    // Show progress dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
         return const ProgressIndicatorWidget();
       },
     );
 
+    final printer = ref.read(printerProvider.notifier);
     try {
-      await _requestBluetoothPermission();
-      await _requestBluetoothScanPermission();
+      await printer.connect(printerAddress);
+    } catch (e) {
+      _checkMountedAndPopDialog();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Не можу підключитись до принтера'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      debugPrint('Error connecting printer: $e');
+      return;
+    }
+    _checkMountedAndPopDialog();
+    await _handlePrintReceiptSplited(printer, receipt);
+    try {
+      await printer.disconnect();
+    } catch (e) {
+      debugPrint('Error disconnecting printer: $e');
+    }
+
+    if (!mounted) return;
+    _checkMountedAndPopDialog();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Друк завершено'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    debugPrint('Receipt printed successfully');
+  }
+
+  void _onPrintPressed(Receipt receipt) async {
+    if (_isPrinting) return;
+
+    setState(() => _isPrinting = true);
+
+    try {
+      await _requestPermissions();
       final printerAddress = await ref.read(printerProvider.future);
 
-      if (printerAddress.isNotEmpty) {
-        debugPrint('Printer address: $printerAddress');
-        final printer = ref.read(printerProvider.notifier);
-        await printer.connect(printerAddress);
-        await printer.print(receipt);
-        try {
-          await printer.disconnect();
-        } catch (e) {
-          debugPrint('Error disconnecting printer: $e');
-        }
+      if (!mounted) return;
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Друк завершено'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-        debugPrint('Receipt printed successfully');
+      if (printerAddress.isNotEmpty) {
+        await _handlePrinting(printerAddress, receipt);
       } else {
         debugPrint('No printer address found');
-        if (mounted) {
-          Navigator.of(dialogContext).pop(); // Pop dialog before navigation
-          router.push(PrinterScreen.routePath);
-        }
+        final router = ref.read(appRouterProvider);
+        router.push(PrinterScreen.routePath);
       }
     } catch (e) {
-      debugPrint('Error printing receipt: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Помилка друку: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      _handlePrintError(e);
     } finally {
       if (mounted) {
         setState(() => _isPrinting = false);
-        Navigator.of(dialogContext).pop();
       }
+    }
+  }
+
+  void _handlePrintError(Object e) {
+    debugPrint('Error printing receipt: $e');
+    if (mounted) {
+      // Make sure to pop the dialog if it's showing
+      try {
+        Navigator.of(context).pop();
+      } catch (_) {}
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Помилка друку: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -282,5 +424,16 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         ],
       ),
     );
+  }
+}
+
+extension<T> on List<T> {
+  Map<String, List<T>> groupBy(String Function(T) key) {
+    return fold(<String, List<T>>{}, (Map<String, List<T>> map, T element) {
+      final String groupKey = key(element);
+      map.putIfAbsent(groupKey, () => []);
+      map[groupKey]!.add(element);
+      return map;
+    });
   }
 }
