@@ -106,7 +106,6 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
   void _goToReceipts() {
     final router = ref.read(appRouterProvider);
-    ref.receipts.triggerNotify();
     router.goNamed(ReceiptsScreen.name);
   }
 

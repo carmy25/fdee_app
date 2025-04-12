@@ -20,7 +20,7 @@
       "type": "dart",
       "flutterMode": "debug",
       "args": [
-        "--dart-define", "BE_HOST=http://192.168.142.105:8000",
+        "--dart-define", "BE_HOST=http://192.168.236.105:8000",
       ],
       "console": "debugConsole"
     },

@@ -74,17 +74,18 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
   Map<String, List<Receipt>> _filterReceipts(List<Receipt> receipts) {
     final receiptsFixed = <Receipt>[];
     final alreadyAdded = <int?>{};
-    receipts.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    for (final receipt in receipts.reversed) {
+    final mutableReceipts = List<Receipt>.from(receipts);
+    mutableReceipts.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    for (final receipt in mutableReceipts.reversed) {
       if (!alreadyAdded.contains(receipt.id)) {
         alreadyAdded.add(receipt.id);
         receiptsFixed.add(receipt);
       }
     }
     final openReceipts =
-        receiptsFixed.where((r) => r.status != 'CLOSED').toList().toList();
+        receiptsFixed.where((r) => r.status != 'CLOSED').toList();
     final closedReceipts =
-        receiptsFixed.where((r) => r.status == 'CLOSED').toList().toList();
+        receiptsFixed.where((r) => r.status == 'CLOSED').toList();
     return {
       'open': openReceipts,
       'closed': closedReceipts,
@@ -113,7 +114,16 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
         final receipt = receipts[index];
         final paymentMethod = _getPaymentMethodText(receipt);
         return ListTile(
-          leading: CircleAvatar(child: Text(receipt.id.toString())),
+          leading: CircleAvatar(
+            child: Text(
+              receipt.id != null
+                  ? receipt.id.toString().padLeft(2, '0').substring(
+                      receipt.id.toString().length > 2
+                          ? receipt.id.toString().length - 2
+                          : 0)
+                  : '00',
+            ),
+          ),
           title: Text(
               '${(receipt.placeName?.isEmpty ?? true) ? 'З собою' : receipt.placeName}. $paymentMethod: ${receipt.price}'),
           subtitle:
