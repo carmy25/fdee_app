@@ -41,7 +41,6 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_rating_bar: ^4.0.1
   flutter_native_splash: ^2.4.3
-  flutter_launcher_icons: ^0.14.1
   flutter_data: ^1.6.0
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
@@ -71,6 +70,7 @@ dependencies:
 
 dev_dependencies:
   sentry_dart_plugin: ^2.4.1
+  flutter_launcher_icons: ^0.14.3
   flutter_test:
     sdk: flutter
 
@@ -90,7 +90,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icons/app_icon.png"
+  image_path: "assets/icons/logo.png"
   # min_sdk_android: 21 # android min sdk min:16, default 21
 
 flutter_native_splash:
