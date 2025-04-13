@@ -257,7 +257,6 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     }
 
     if (!mounted) return;
-    _checkMountedAndPopDialog();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Друк завершено'),

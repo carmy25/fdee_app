@@ -1,7 +1,10 @@
+import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:bluetooth_classic/bluetooth_classic.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fudiee/models/printer/printer.model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PrinterScreen extends ConsumerStatefulWidget {
   static final name = 'PrinterScreen';
@@ -13,10 +16,9 @@ class PrinterScreen extends ConsumerStatefulWidget {
 }
 
 class PrinterScreenState extends ConsumerState<PrinterScreen> {
-  FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
-  List<BluetoothDevice> devices = [];
-  BluetoothConnection? connection;
-  BluetoothDevice? selectedDevice;
+  final _bluetooth = BluetoothClassic();
+  List<Device> _discoveredDevices = [];
+  Device? _selectedDevice;
 
   @override
   void initState() {
@@ -24,20 +26,41 @@ class PrinterScreenState extends ConsumerState<PrinterScreen> {
     _getDevices();
   }
 
-  /// Отримати список з’єднаних Bluetooth-пристроїв
+  Future<void> _requestBluetoothPermission() async {
+    if (await Permission.bluetoothConnect.request().isGranted) {
+      debugPrint("Bluetooth CONNECT permission granted");
+    } else {
+      debugPrint("Bluetooth CONNECT permission denied");
+    }
+  }
+
+  Future<void> _requestBluetoothScanPermission() async {
+    if (await Permission.bluetoothScan.request().isGranted) {
+      debugPrint("Bluetooth SCAN permission granted");
+    } else {
+      debugPrint("Bluetooth SCAN permission denied");
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    await _requestBluetoothPermission();
+    await _requestBluetoothScanPermission();
+  }
+
   Future<void> _getDevices() async {
-    List<BluetoothDevice> pairedDevices = await bluetooth.getBondedDevices();
+    await _bluetooth.initPermissions();
+    await _requestPermissions();
+    final pairedDevices = await _bluetooth.getPairedDevices();
     setState(() {
-      devices = pairedDevices;
+      _discoveredDevices = pairedDevices;
     });
   }
 
   /// Підключитися до вибраного принтера
-  Future<void> _connect(BluetoothDevice device) async {
+  Future<void> _connect(Device device) async {
     try {
-      connection = await BluetoothConnection.toAddress(device.address);
       setState(() {
-        selectedDevice = device;
+        _selectedDevice = device;
       });
       final printer = ref.read(printerProvider.notifier);
       await printer.setAddress(device.address);
@@ -48,31 +71,41 @@ class PrinterScreenState extends ConsumerState<PrinterScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Bluetooth Принтери"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            final NavigatorState navigator = Navigator.of(context);
+            if (mounted) {
+              navigator.pop();
+            }
+          },
         ),
       ),
       body: Column(
         children: [
-          ElevatedButton(
-              onPressed: _getDevices, child: Text("🔄 Оновити список")),
           Expanded(
             child: ListView.builder(
-              itemCount: devices.length,
+              itemCount: _discoveredDevices.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(devices[index].name ?? "Невідомий пристрій"),
-                  subtitle: Text(devices[index].address),
-                  trailing: selectedDevice == devices[index]
+                  title: Text(
+                      _discoveredDevices[index].name ?? "Невідомий пристрій"),
+                  subtitle: Text(_discoveredDevices[index].address),
+                  trailing: _selectedDevice == _discoveredDevices[index]
                       ? Icon(Icons.check, color: Colors.green)
                       : null,
                   onTap: () async {
-                    await _connect(devices[index]);
+                    await _connect(_discoveredDevices[index]);
+                    await _bluetooth.stopScan();
                   },
                 );
               },

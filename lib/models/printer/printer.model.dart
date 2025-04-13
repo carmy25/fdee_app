@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:fudiee/models/receipt/receipt.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:charset/charset.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'printer.model.g.dart';
@@ -11,6 +11,7 @@ part 'printer.model.g.dart';
 @riverpod
 class Printer extends _$Printer {
   BluetoothConnection? _connection;
+  final _blueClassicPlugin = FlutterBlueClassic();
   @override
   Future<String> build() async {
     debugPrint('Printer.build');
@@ -28,8 +29,8 @@ class Printer extends _$Printer {
     state = AsyncData(address);
   }
 
-  Future<BluetoothConnection> connect(String address) async {
-    final conn = await BluetoothConnection.toAddress(address);
+  Future<BluetoothConnection?> connect(String address) async {
+    final conn = await _blueClassicPlugin.connect(address);
     _connection = conn;
     debugPrint("✅ Підключено до $address");
     return conn;
@@ -39,7 +40,8 @@ class Printer extends _$Printer {
     try {
       final connection = _connection;
       if (connection != null) {
-        await Future.delayed(const Duration(seconds: 4));
+        await connection.finish();
+        // await Future.delayed(const Duration(seconds: 4));
         // await connection.close();
         // _connection = null;
       }
