@@ -6,11 +6,13 @@ import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/themes/theme.dart';
 
 import 'package:fudiee/main.data.dart';
+import 'package:fudiee/widgets/progress_indicator.widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Future.delayed(const Duration(seconds: 1));
 
   await SentryFlutter.init(
     (options) {
@@ -50,23 +52,27 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final routerConfig = ref.watch(appRouterProvider);
     final repoInitializer = ref.watch(repositoryInitializerProvider);
+    final app = ScreenUtilInit(
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, _) {
+        return MaterialApp.router(
+          title: 'FDee',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.buildTheme(context),
+          routerConfig: routerConfig,
+        );
+      },
+    );
     return repoInitializer.when(
-        loading: () => const CircularProgressIndicator(),
+        loading: () => MaterialApp(
+              home: Scaffold(
+                body: ProgressIndicatorWidget(),
+              ),
+            ),
         error: (error, _) => MaterialApp(home: Text(error.toString())),
         data: (_) {
-          return ScreenUtilInit(
-            designSize: const Size(428, 926),
-            minTextAdapt: true,
-            splitScreenMode: true,
-            builder: (context, _) {
-              return MaterialApp.router(
-                title: 'FDee',
-                debugShowCheckedModeBanner: false,
-                theme: AppTheme.buildTheme(context),
-                routerConfig: routerConfig,
-              );
-            },
-          );
+          return app;
         });
   }
 }
