@@ -87,16 +87,29 @@ class _SignInState extends ConsumerState<SignIn> {
             AppButtonWidget(
               text: 'Ввійти',
               onPressed: () async {
-                final user = await ref.users.jsonUserAdapter.signIn(
-                  username: _usernameController.text,
-                  password: _passwdController.text,
-                );
+                final messenger = ScaffoldMessenger.of(context);
                 final SharedPreferences prefs =
                     await SharedPreferences.getInstance();
-                if (user?.token != null) {
-                  await prefs.setString('token', user!.token);
-                  await prefs.setBool('remember', rememberMe);
-                  router.go(ReceiptsScreen.routePath);
+                try {
+                  final user = await ref.users.jsonUserAdapter.signIn(
+                    username: _usernameController.text,
+                    password: _passwdController.text,
+                  );
+                  if (user?.token != null) {
+                    await prefs.setString('token', user!.token);
+                    await prefs.setBool('remember', rememberMe);
+                    router.go(ReceiptsScreen.routePath);
+                    return;
+                  }
+                } catch (e) {
+                  debugPrint('❌ $e');
+                } finally {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'не вдалось ввійти(невірний пароль або відсутній інтернет)'),
+                    ),
+                  );
                 }
               },
             ),

@@ -53,6 +53,7 @@ class MyApp extends ConsumerWidget {
     final routerConfig = ref.watch(appRouterProvider);
     final repoInitializer = ref.watch(repositoryInitializerProvider);
     final app = ScreenUtilInit(
+      designSize: Size(393, 851),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, _) {
