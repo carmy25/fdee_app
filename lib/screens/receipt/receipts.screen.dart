@@ -66,12 +66,38 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     _handleRefresh();
   }
 
-  void _initializeData() {
-    if (!mounted) return;
-    _handleRefresh();
+  Future<void> _syncUnsyncedReceipts() async {
+    try {
+      // Get all local receipts
+      final localReceipts = await ref.receipts.findAll(
+        remote: false,
+        syncLocal: false,
+      );
+
+      // Filter unsynced receipts
+      final unsyncedReceipts =
+          localReceipts.where((receipt) => receipt.isSynced == false);
+
+      // Try to sync each unsynced receipt
+      for (final receipt in unsyncedReceipts) {
+        try {
+          await ref.receipts.save(receipt.copyWith(), remote: true);
+          debugPrint('Successfully synced receipt ${receipt.id}');
+        } catch (e) {
+          debugPrint('Failed to sync receipt ${receipt.id}: $e');
+        }
+      }
+    } catch (e) {
+      debugPrint('Error syncing unsynced receipts: $e');
+    }
   }
 
   Future<List<Receipt>> _fetchReceipts() async {
+    if (!_isOffline) {
+      // First try to sync any unsynced receipts
+      await _syncUnsyncedReceipts();
+    }
+
     try {
       return await ref.receipts.findAll(
         remote: true,
@@ -96,6 +122,11 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
     } catch (e) {
       debugPrint('Error refreshing receipts: $e');
     }
+  }
+
+  void _initializeData() {
+    if (!mounted) return;
+    _handleRefresh();
   }
 
   Map<String, List<Receipt>> _filterReceipts(List<Receipt>? receipts) {
