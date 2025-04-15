@@ -62,7 +62,7 @@ Receipt _$ReceiptFromJson(Map<String, dynamic> json) => Receipt(
       place: (json['place'] as num?)?.toInt(),
       number: json['number'] as num?,
       price: (json['price'] as num?)?.toDouble() ?? 0,
-      isSynced: json['is_synced'] as bool? ?? false,
+      isSynced: json['is_synced'] as bool? ?? true,
       createdAt: Receipt._createdAtFromJson(json['created_at'] as String),
       productItems:
           Receipt._productItemsFromJson(json['product_items'] as List),

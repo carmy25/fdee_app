@@ -83,18 +83,46 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       price: price,
       placeName: placeName,
     );
+
     try {
-      await ref.receipts.save(updatedReceipt);
-      _goToReceipts();
-    } catch (e) {
-      debugPrint('Error saving receipt: $e');
+      // Try to save with server sync
+      await ref.receipts.save(updatedReceipt, remote: true);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Помилка збереження чека: $e'),
-            backgroundColor: Colors.red,
+          const SnackBar(
+            content: Text('Чек збережено'),
+            backgroundColor: Colors.green,
           ),
         );
+      }
+      _goToReceipts();
+    } catch (e) {
+      debugPrint('Error saving receipt to server: $e');
+      try {
+        // If server save fails, save locally with isSynced = false
+        final offlineReceipt = updatedReceipt.copyWith(
+          isSynced: false,
+        );
+        await ref.receipts.save(offlineReceipt, remote: false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Чек збережено локально'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        _goToReceipts();
+      } catch (localError) {
+        debugPrint('Error saving receipt locally: $localError');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Помилка збереження чека: $localError'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }

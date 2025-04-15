@@ -57,7 +57,7 @@ class Receipt extends DataModel<Receipt> {
     this.place,
     this.number,
     this.price = 0,
-    this.isSynced = false,
+    this.isSynced = true,
     required this.createdAt,
     required this.productItems,
     required this.paymentMethod,
@@ -124,6 +124,7 @@ class Receipt extends DataModel<Receipt> {
     Object? placeName = const _Sentinel(),
     Object? status = const _Sentinel(),
     List<ProductItem>? productItems,
+    bool? isSynced,
   }) {
     return Receipt(
       id: id == const _Sentinel() ? this.id : id as int?,
@@ -142,6 +143,7 @@ class Receipt extends DataModel<Receipt> {
           ? this.placeName
           : placeName as String?,
       productItems: productItems ?? this.productItems,
+      isSynced: isSynced ?? true,
     );
   }
 
