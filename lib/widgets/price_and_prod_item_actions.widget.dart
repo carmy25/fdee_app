@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/models/product/product.model.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
 import 'package:fudiee/screens/home/views/cart/components/cartitem/components/cart_action_buttons.dart';
@@ -36,7 +37,7 @@ class PriceAndProdItemActionsWidget extends ConsumerWidget {
             Text(
               '₴${product.price}',
               style: TextStyle(
-                fontSize: 23,
+                fontSize: 23.sp,
                 color: pinkColor,
               ),
             ),

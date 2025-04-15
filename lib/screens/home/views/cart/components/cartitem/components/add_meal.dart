@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/constants/assets_constant.dart';
 import 'package:fudiee/themes/app_colors.dart';
 
@@ -26,7 +27,7 @@ class AddYourMeal extends ConsumerWidget {
           child: Text(
             'Add to your meal',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 16.sp,
               color: primaryTextColor,
             ),
           ),

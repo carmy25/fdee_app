@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/user/user.model.dart';
 import 'package:fudiee/routes/router.dart';
@@ -22,6 +23,50 @@ class _SignInState extends ConsumerState<SignIn> {
   bool rememberMe = false;
   final _usernameController = TextEditingController();
   final _passwdController = TextEditingController();
+
+  void _showError() {
+    if (!mounted) return;
+    showErrorOverlay(context);
+  }
+
+  void showErrorOverlay(BuildContext context) {
+    final overlay = Overlay.of(context);
+    final entry = OverlayEntry(
+      builder: (context) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            margin: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(51),
+                  blurRadius: 10,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: const Text(
+              'не вдалось ввійти(невірний пароль або відсутній інтернет)',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 3), () {
+      entry.remove();
+    });
+  }
 
   @override
   void dispose() {
@@ -75,10 +120,10 @@ class _SignInState extends ConsumerState<SignIn> {
                 Text(
                   'Запамятати',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     color: rememberMe
                         ? primaryColor
-                        : primaryTextColor.withValues(alpha: .7),
+                        : primaryTextColor.withAlpha(179),
                   ),
                 ),
               ],
@@ -87,29 +132,33 @@ class _SignInState extends ConsumerState<SignIn> {
             AppButtonWidget(
               text: 'Ввійти',
               onPressed: () async {
-                final messenger = ScaffoldMessenger.of(context);
+                final currentRouter = router;
                 final SharedPreferences prefs =
                     await SharedPreferences.getInstance();
                 try {
+                  debugPrint('⌛ Attempting sign in...');
                   final user = await ref.users.jsonUserAdapter.signIn(
                     username: _usernameController.text,
                     password: _passwdController.text,
                   );
-                  if (user?.token != null) {
-                    await prefs.setString('token', user!.token);
-                    await prefs.setBool('remember', rememberMe);
-                    router.go(ReceiptsScreen.routePath);
+                  debugPrint('✅ Sign in response received: $user');
+
+                  if (user == null) {
+                    debugPrint('❌ User is null');
+                    _showError();
                     return;
                   }
+
+                  debugPrint('💾 Saving token...');
+                  await prefs.setString('token', user.token);
+                  await prefs.setBool('remember', rememberMe);
+
+                  if (!mounted) return;
+                  debugPrint('🚀 Navigating to receipts...');
+                  currentRouter.go(ReceiptsScreen.routePath);
                 } catch (e) {
-                  debugPrint('❌ $e');
-                } finally {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          'не вдалось ввійти(невірний пароль або відсутній інтернет)'),
-                    ),
-                  );
+                  debugPrint('❌ Error during sign in: $e');
+                  _showError();
                 }
               },
             ),

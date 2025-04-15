@@ -1,3 +1,4 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
 import 'package:fudiee/models/receipt/receipt.model.dart';
 import 'package:fudiee/widgets/progress_indicator.widget.dart';
@@ -210,7 +211,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
                       ],
                     ),
                     margin:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -243,7 +244,7 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
                       ],
                     ),
                     margin:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

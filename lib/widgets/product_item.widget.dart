@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/models/product/product.model.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
 import 'package:fudiee/screens/home/views/cart/components/cartitem/components/build_image.dart';
@@ -63,8 +64,8 @@ class ProductItemWidget extends ConsumerWidget {
             ),
             Text(
               '₴$productTotal',
-              style: const TextStyle(
-                fontSize: 23,
+              style: TextStyle(
+                fontSize: 23.sp,
                 fontWeight: FontWeight.bold,
               ),
             )

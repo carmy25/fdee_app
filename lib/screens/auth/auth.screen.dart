@@ -129,7 +129,7 @@ class _AuthTabs extends ConsumerWidget {
                 text,
                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 22,
+                      fontSize: 22.sp,
                       color: active ? primaryTextColor : greyColor,
                     ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/main.data.dart';
 import 'package:fudiee/models/place/place.model.dart';
 
@@ -43,16 +44,16 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
         ],
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
       child: DropdownButton<Place?>(
         value: widget.controller.value != null
             ? menuItems
                 .firstWhere((e) => e.value?.id == widget.controller.value?.id)
                 .value
             : null,
-        hint: const Text(
+        hint: Text(
           'Місце',
-          style: TextStyle(fontSize: 20, color: Colors.white),
+          style: TextStyle(fontSize: 20.sp, color: Colors.white),
         ),
         items: [
           const DropdownMenuItem<Place?>(
@@ -66,7 +67,7 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
             widget.controller.value = newValue;
           });
         },
-        style: const TextStyle(fontSize: 20),
+        style: TextStyle(fontSize: 20.sp),
         dropdownColor: Colors.black,
         iconEnabledColor: Colors.white,
         underline: Container(),

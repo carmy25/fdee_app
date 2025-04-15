@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
 import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/home/views/home/components/header_section.dart';
@@ -62,16 +63,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                      EdgeInsets.symmetric(horizontal: 30.w, vertical: 30.h),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'До Чеку',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                   ),
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BuildDescriptionsAndRatings extends ConsumerWidget {
   const BuildDescriptionsAndRatings({
@@ -28,8 +29,8 @@ class BuildDescriptionsAndRatings extends ConsumerWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -38,8 +39,8 @@ class BuildDescriptionsAndRatings extends ConsumerWidget {
                 width: 320,
                 child: Text(
                   desc,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: 12.sp,
                   ),
                 ),
               )
@@ -55,7 +56,7 @@ class BuildDescriptionsAndRatings extends ConsumerWidget {
             direction: Axis.horizontal,
             allowHalfRating: true,
             itemCount: 5,
-            itemPadding: const EdgeInsets.symmetric(horizontal: 2),
+            itemPadding: EdgeInsets.symmetric(horizontal: 2.w),
             itemBuilder: (context, _) => const Icon(
               Icons.star,
               color: Colors.amber,

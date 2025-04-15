@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/widgets/category_card.widget.dart';
 import 'package:fudiee/themes/app_colors.dart';
 import 'package:fudiee/widgets/buttons/app_icon_button.dart';
@@ -54,9 +55,9 @@ class PopularNowCard extends ConsumerWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 1,
-                  vertical: 1,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 1.w,
+                  vertical: 1.h,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,16 +69,16 @@ class PopularNowCard extends ConsumerWidget {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(
-                            fontSize: 14,
+                          style: TextStyle(
+                            fontSize: 14.sp,
                             letterSpacing: 1.1,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           '${deliveryTime.round()} minutes delivery',
-                          style: const TextStyle(
-                            fontSize: 10,
+                          style: TextStyle(
+                            fontSize: 10.sp,
                             color: Colors.black87,
                           ),
                         ),
