@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_data/flutter_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,6 +50,27 @@ void main() async {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
+  void startPingingServer() {
+    Timer.periodic(Duration(minutes: 1), (timer) {
+      pingServer();
+    });
+  }
+
+  Future<void> pingServer() async {
+    try {
+      final response = await http.get(Uri.parse('${const String.fromEnvironment(
+        'BE_HOST',
+      )}/ping'));
+      debugPrint('Ping response: ${response.statusCode}');
+    } catch (e) {
+      debugPrint('Ping failed: $e');
+    }
+  }
+
+  void initStaete() {
+    startPingingServer();
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
