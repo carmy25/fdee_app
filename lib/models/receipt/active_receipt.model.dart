@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fudiee/models/product/product.model.dart';
 import 'package:fudiee/models/product/product_item.model.dart';
@@ -17,7 +19,7 @@ class ActiveReceipt extends _$ActiveReceipt {
   }
 
   setActive(Receipt receipt) {
-    debugPrint('setActiveRecept: $receipt');
+    debugPrint('setActiveRecept: ${receipt.id}');
     state = receipt;
   }
 
@@ -26,7 +28,8 @@ class ActiveReceipt extends _$ActiveReceipt {
     if (receipt == null) {
       return;
     }
-    debugPrint('updateProduct: ${product.id}: ${product.name}');
+    debugPrint(
+        'updateProduct: ${product.id}: ${product.name}: ${product.rootCategory}');
     final newReceipt = receipt.copyWith(productItems: []);
     final items = receipt.productItems.where((item) => item.amount > 0);
     var alreadyAdded = false;

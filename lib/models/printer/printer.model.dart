@@ -33,6 +33,8 @@ class Printer extends _$Printer {
     final conn = await _blueClassicPlugin.connect(address);
     _connection = conn;
     debugPrint("✅ Підключено до $address");
+    await Future.delayed(const Duration(seconds: 1));
+    debugPrint("after delay");
     return conn;
   }
 
@@ -40,8 +42,11 @@ class Printer extends _$Printer {
     try {
       final connection = _connection;
       if (connection != null) {
+        await Future.delayed(const Duration(seconds: 2));
         await connection.finish();
-        // await Future.delayed(const Duration(seconds: 4));
+        await Future.delayed(const Duration(seconds: 1));
+        connection.close();
+        debugPrint("✅ Відключено від принтера");
         // await connection.close();
         // _connection = null;
       }
@@ -62,6 +67,12 @@ class Printer extends _$Printer {
             align: PosAlign.center,
             height: PosTextSize.size2,
             width: PosTextSize.size2,
+            bold: true));
+    bytes += generator.text('(${receipt.productItems.first.rootCategory})',
+        styles: PosStyles(
+            align: PosAlign.center,
+            height: PosTextSize.size1,
+            width: PosTextSize.size1,
             bold: true));
     final now = DateTime.now();
     bytes += generator.text(
@@ -117,8 +128,10 @@ class Printer extends _$Printer {
     final ticket = await _createReceiptTicket(receipt);
     final c = _connection;
     if (c != null) {
+      await Future.delayed(const Duration(seconds: 2));
       c.output.add(Uint8List.fromList(ticket));
-      await c.output.allSent;
+      final sentStatus = await c.output.allSent;
+      debugPrint('Sent status: $sentStatus');
       return;
     }
     debugPrint('No connection to printer available');

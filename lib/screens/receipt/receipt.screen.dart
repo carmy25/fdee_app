@@ -238,6 +238,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         },
       );
       await printer.print(splittedReceipt);
+      _checkMountedAndPopDialog();
 
       printedCategories.add(currentCategory);
       currentIndex++;
@@ -280,6 +281,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
     await _handlePrintReceiptSplited(printer, receipt);
     try {
       await printer.disconnect();
+      debugPrint(wrapWidth: 1024, 'Printer disconnected');
     } catch (e) {
       debugPrint('Error disconnecting printer: $e');
     }

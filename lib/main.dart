@@ -15,6 +15,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  startPingingServer();
   await Future.delayed(const Duration(seconds: 1));
 
   await SentryFlutter.init(
@@ -48,29 +49,26 @@ void main() async {
   );
 }
 
+Future<void> pingServer() async {
+  try {
+    final response = await http.get(Uri.parse('${const String.fromEnvironment(
+      'BE_HOST',
+    )}/ping/'));
+    debugPrint('Ping response: ${response.statusCode}');
+  } catch (e) {
+    debugPrint('Ping failed: $e');
+  }
+}
+
+void startPingingServer() {
+  debugPrint('Starting server ping...');
+  Timer.periodic(Duration(minutes: 1), (timer) {
+    pingServer();
+  });
+}
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
-  void startPingingServer() {
-    Timer.periodic(Duration(minutes: 1), (timer) {
-      pingServer();
-    });
-  }
-
-  Future<void> pingServer() async {
-    try {
-      final response = await http.get(Uri.parse('${const String.fromEnvironment(
-        'BE_HOST',
-      )}/ping'));
-      debugPrint('Ping response: ${response.statusCode}');
-    } catch (e) {
-      debugPrint('Ping failed: $e');
-    }
-  }
-
-  void initStaete() {
-    startPingingServer();
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

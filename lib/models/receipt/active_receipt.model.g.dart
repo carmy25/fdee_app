@@ -6,7 +6,7 @@ part of 'active_receipt.model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$activeReceiptHash() => r'3be25cf73aba2353f3d5c1c624f21117e0d68271';
+String _$activeReceiptHash() => r'2126c52720cd5c7a6848e35ba8001e3a7543f4aa';
 
 /// See also [ActiveReceipt].
 @ProviderFor(ActiveReceipt)

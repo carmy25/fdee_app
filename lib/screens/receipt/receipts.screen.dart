@@ -1,6 +1,7 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fudiee/models/receipt/active_receipt.model.dart';
 import 'package:fudiee/models/receipt/receipt.model.dart';
+import 'package:fudiee/screens/auth/auth.screen.dart';
 import 'package:fudiee/widgets/progress_indicator.widget.dart';
 import 'package:intl/intl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -11,6 +12,7 @@ import 'package:fudiee/main.data.dart';
 import 'package:fudiee/routes/router.dart';
 import 'package:fudiee/screens/cart/cart.screen.dart';
 import 'package:fudiee/themes/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReceiptsScreen extends ConsumerStatefulWidget {
   const ReceiptsScreen({super.key});
@@ -102,8 +104,24 @@ class _ReceiptsScreenState extends ConsumerState<ReceiptsScreen> {
       return await ref.receipts.findAll(
         remote: true,
         syncLocal: true,
-        onError: (exception, label, _) {
+        onError: (exception, label, _) async {
           debugPrint('Error fetching $label: $exception');
+          if (exception.statusCode == 401) {
+            // Handle unauthorized error
+            debugPrint('Unauthorized error: $exception');
+            // Clear the token from shared preferences
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove('token');
+
+            // Navigate to SignIn
+            if (!mounted) return [];
+            final router = ref.read(appRouterProvider);
+            router.go(AuthScreen.routeName); //
+          } else {
+            // Handle other errors
+            debugPrint('Error: $exception');
+          }
+
           return [];
         },
       );
