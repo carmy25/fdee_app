@@ -39,11 +39,13 @@ class PaymentMethodToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final initialLabelIndex = _getInitialIndex();
-    return Flexible(
+    return Expanded(
       child: ToggleSwitch(
-        minWidth: 90.0,
+        minWidth: 90.w,
+        customWidths: [90.w, 90.w, 90.w],
         minHeight: 55.0,
         fontSize: 14.sp,
+        iconSize: 19.sp,
         cornerRadius: 20.0,
         activeBgColor: [Colors.green],
         activeFgColor: Colors.white,

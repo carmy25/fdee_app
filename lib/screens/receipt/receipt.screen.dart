@@ -86,7 +86,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
 
     try {
       // Try to save with server sync
-      await ref.receipts.save(updatedReceipt, remote: true);
+      await ref.receipts.save(
+        updatedReceipt,
+        remote: true,);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

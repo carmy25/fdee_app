@@ -68,7 +68,8 @@ class Printer extends _$Printer {
             height: PosTextSize.size2,
             width: PosTextSize.size2,
             bold: true));
-    bytes += generator.text('(${receipt.productItems.first.rootCategory})',
+    bytes += generator.text(
+        '${receipt.productItems.first.rootCategory} (${receipt.place})',
         styles: PosStyles(
             align: PosAlign.center,
             height: PosTextSize.size1,

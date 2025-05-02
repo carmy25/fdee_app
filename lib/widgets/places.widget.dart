@@ -19,18 +19,45 @@ class PlacesWidget extends ConsumerStatefulWidget {
 
 class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final placesState = ref.places.watchAll(syncLocal: true, remote: true);
     if (placesState.isLoading) {
       return const CircularProgressIndicator();
     }
     final places = placesState.model;
-    final menuItems = places.map((e) {
-      return DropdownMenuItem<Place?>(
-        value: e,
-        child: Text(e.name),
+
+    // Find the selected place from the places list if there is a selected value
+    Place? selectedPlace;
+    if (widget.controller.value != null) {
+      selectedPlace = places.firstWhere(
+        (p) => p.id == widget.controller.value?.id,
+        orElse: () => widget.controller.value!,
       );
-    }).toList();
+    }
+
+    // Create menu items including the "З собою" option
+    final List<DropdownMenuItem<Place?>> menuItems = [
+      DropdownMenuItem<Place?>(
+        value: null,
+        child: Text(
+          'З собою',
+          style: TextStyle(fontSize: 20.sp, color: Colors.white),
+        ),
+      ),
+      ...places.map((e) => DropdownMenuItem<Place?>(
+            value: e,
+            child: Text(
+              e.name,
+              style: TextStyle(fontSize: 20.sp, color: Colors.white),
+            ),
+          )),
+    ];
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.black,
@@ -46,28 +73,18 @@ class _PlacesWidgetState extends ConsumerState<PlacesWidget> {
       ),
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
       child: DropdownButton<Place?>(
-        value: widget.controller.value != null
-            ? menuItems
-                .firstWhere((e) => e.value?.id == widget.controller.value?.id)
-                .value
-            : null,
+        value: selectedPlace,
         hint: Text(
           'Місце',
           style: TextStyle(fontSize: 20.sp, color: Colors.white),
         ),
-        items: [
-          const DropdownMenuItem<Place?>(
-            value: null,
-            child: Text('З собою'),
-          ),
-          ...menuItems,
-        ],
+        items: menuItems,
         onChanged: (Place? newValue) {
           setState(() {
             widget.controller.value = newValue;
           });
         },
-        style: TextStyle(fontSize: 20.sp),
+        style: TextStyle(fontSize: 20.sp, color: Colors.white),
         dropdownColor: Colors.black,
         iconEnabledColor: Colors.white,
         underline: Container(),
