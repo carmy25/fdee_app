@@ -33,7 +33,6 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   final PlaceController placeController = PlaceController();
   final PaymentMethodController paymentMethodController =
       PaymentMethodController();
-  bool _isPrinting = false;
 
   void _onSavePressed(Receipt receipt) async {
     debugPrint('onPressed->save_receipt');
@@ -88,7 +87,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       // Try to save with server sync
       await ref.receipts.save(
         updatedReceipt,
-        remote: true,);
+        remote: true,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -299,10 +299,6 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
   }
 
   void _onPrintPressed(Receipt receipt) async {
-    if (_isPrinting) return;
-
-    setState(() => _isPrinting = true);
-
     try {
       await _requestPermissions();
       final printerAddress = await ref.read(printerProvider.future);
@@ -318,10 +314,6 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       }
     } catch (e) {
       _handlePrintError(e);
-    } finally {
-      if (mounted) {
-        setState(() => _isPrinting = false);
-      }
     }
   }
 
